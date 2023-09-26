@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
@@ -6,15 +6,13 @@ import { generateDataArrayWithLength } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
 
 function App() {
-  const [playerCount, setPlayerCount] = useState(0);
-  const initialDataArray = generateDataArrayWithLength(playerCount);
-  console.log(initialDataArray);
-
-  const [data, setData] = useState(initialDataArray);
+  const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  console.log(isModalOpen)
+  useEffect(() => {
+    
+  }, [data])
 
   const openModal = (row) => {
     setSelectedRow(row);
@@ -26,25 +24,33 @@ function App() {
   };
 
   const handleSave = (editedData) => {
+    console.log('saved button clicked', editedData)
+    console.log('data', data)
     // Update the data with the edited data
-    const updatedData = data.map((row) =>
-      row.position === selectedRow.position ? editedData : row
+    const updatedData = data.map((row) => {
+      if (row.position === editedData.position) {
+        return editedData;
+      }
+      return row;
+    }
     );
     setData(updatedData);
+    console.log('handlesave', data)
   };
 
   const handlePlayerCountChange = (count) => {
-    setPlayerCount(count);
+    const initialDataArray = generateDataArrayWithLength(count);
+    setData(initialDataArray);
   };
 
   return (
     <>
       <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Player Count App</h1>
-      {!playerCount 
+      {!data.length > 0
         ? <PlayerCountInput onPlayerCountChange={handlePlayerCountChange} />
         : <>
-          <PlayerPositionTable rows={initialDataArray} onModal={openModal} isModalOpen={isModalOpen} />
+          <PlayerPositionTable rows={data} onModal={openModal} isModalOpen={isModalOpen} />
           <EditTableModal
             isOpen={isModalOpen}
             onClose={closeModal}

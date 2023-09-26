@@ -9,8 +9,10 @@ export const EditTableModal = (modal) => {
   };
 
   const handleSave = () => {
-    modal.onSave(editedData);
+    const data = { ...editedData, position: modal.rowData.position}
+    modal.onSave(data);
     modal.onClose();
+    setEditedData({ name: '', flag: '' })
   };
 
   return (
@@ -23,7 +25,7 @@ export const EditTableModal = (modal) => {
             <input
               type="text"
               name="name"
-              value={editedData.name}
+              value={editedData.name ? editedData.name : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -34,6 +36,7 @@ export const EditTableModal = (modal) => {
                 value={editedData.flag}
                 onChange={handleInputChange}
             >
+                <option value="" disabled>Select Flag</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
