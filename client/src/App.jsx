@@ -2,13 +2,16 @@ import { useState } from 'react';
 import './App.css'
 import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
-import { generateDataArrayWithLength } from './helpers';
+import { generateDataArrayWithLength, updateDataFlag1FirstHalfPriority, updateDataFlag2FirstHalf, updateDataFlag3 } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
+import QuarterTable from './components/QuarterTable';
 
 function App() {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+
+  console.log(data);
 
   const openModal = (row) => {
     setSelectedRow(row);
@@ -20,9 +23,6 @@ function App() {
   };
 
   const handleSave = (editedData) => {
-    console.log('saved button clicked', editedData)
-    console.log('data', data)
-    // Update the data with the edited data
     const updatedData = data.map((row) => {
       if (row.position === editedData.position) {
         return editedData;
@@ -30,8 +30,11 @@ function App() {
       return row;
     }
     );
-    setData(updatedData);
-    console.log('handlesave', data)
+    const flag3data = updateDataFlag3(updatedData);
+    const flag1data = updateDataFlag1FirstHalfPriority(flag3data);
+    const flag2data = updateDataFlag2FirstHalf(flag1data);
+    console.log('flag2data', flag2data)
+    setData(flag2data);
   };
 
   const handlePlayerCountChange = (count) => {
@@ -50,13 +53,13 @@ function App() {
           <EditTableModal
             isOpen={isModalOpen}
             onClose={closeModal}
-            rowData={selectedRow}
+            rowData={selectedRow != null ? selectedRow : { name: '', flag: ''}}
             onSave={handleSave}
             />
           </>
       }
-      {/* <p>{playerCount !== null ? `Number of players: ${playerCount}` : 'Enter a number above.'}</p> */}
     </div>
+    {data.length > 0 && <QuarterTable name={'First'} data={data} />}
     </>
   )
 }

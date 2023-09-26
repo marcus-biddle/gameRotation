@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './styled.css';
 
 export const EditTableModal = (modal) => {
-  const [editedData, setEditedData] = useState({ ...modal.rowData });
+  const [editedData, setEditedData] = useState({ name: modal.rowData.name, flag: modal.rowData.flag });
   const [error, setError] = useState(false);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -11,8 +11,32 @@ export const EditTableModal = (modal) => {
 
   const handleSave = () => {
     if ((editedData.name && editedData.flag || (modal.rowData.name != '' && modal.rowData.flag != ''))) {
+      const time = editedData.flag === '3' ? 20 : 0;
       setError(false)
-      const data = { position: modal.rowData.position, name: editedData.name, flag: editedData.flag}
+      const data = { 
+        position: modal.rowData.position, 
+        name: editedData.name, flag: 
+        editedData.flag, 
+        maxTimeAllowed: time,
+        quarters: [
+          {
+            firstHalf: 0,
+            secondHalf: 0
+          },
+          {
+            firstHalf: 0,
+            secondHalf: 0
+          },
+          {
+            firstHalf: 0,
+            secondHalf: 0
+          },
+          {
+            firstHalf: 0,
+            secondHalf: 0
+          }
+        ]
+      }
       modal.onSave(data);
       modal.onClose();
       setEditedData({ name: '', flag: '' })

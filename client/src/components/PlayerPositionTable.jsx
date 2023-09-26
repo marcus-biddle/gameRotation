@@ -7,7 +7,6 @@ const HEADS = [
 ]
 
 export const PlayerPositionTable = (table) => {
-    console.log('table', table.isModalOpen)
   return (
     <table className="min-w-full">
       <thead>
