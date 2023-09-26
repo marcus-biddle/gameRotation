@@ -100,7 +100,7 @@ export function generateDataArrayWithLength(rowLength) {
         }
         return sum;
       }, 0);
-      return quarterSum >= 30;
+      return quarterSum === 30;
     };
   
     while (!isQuarterSumValid()) {
