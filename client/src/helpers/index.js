@@ -29,7 +29,7 @@ export function generateDataArrayWithLength(rowLength) {
     return dataArray;
   }
   
- export function updateDataFlag3(dataArray) {
+ export function validateQuarter1Flag3PlayerPositions(dataArray) {
   console.log('function');
     const updatedDataArray = dataArray.map((item) => {
       if (item.flag === '3') {
@@ -62,26 +62,29 @@ export function generateDataArrayWithLength(rowLength) {
   }
 
   export function checkQuarterSum(quarterIndex, dataArray) {
-    const valid = dataArray.every((item) => {
+    let totalSum = 0;
+  
+    dataArray.forEach((item) => {
       if (item.quarters && item.quarters[quarterIndex]) {
         const quarter = item.quarters[quarterIndex];
         const sum = quarter.firstHalf + quarter.secondHalf;
-        return sum === 30;
+        totalSum += sum;
       }
-      return false; // Handle cases where the quarter or quarters array doesn't exist
     });
   
-    return valid;
+    return totalSum;
   }
   
   
-  export function updateDataFlag1FirstHalfPriority(dataArray) {
+  
+  
+  export function validateQuarter1FirstHalfFlag1PlayerPositions(dataArray) {
     const flag1Count = dataArray.filter((item) => item.flag === '1').length;
 
     const playerLimit = checkQuarterSum(0, dataArray);
   
     // If there are 6 or fewer objects with a flag of 1 and there's less than 6 players in the quarter, update the firstHalf of the first quarter
-    if (flag1Count <= 6 && playerLimit) {
+    if (flag1Count <= 6 && playerLimit < 30) {
       dataArray.forEach((item) => {
         if (item.flag === '1') {
           item.quarters[0].firstHalf = 5;
@@ -92,23 +95,19 @@ export function generateDataArrayWithLength(rowLength) {
     return dataArray;
   }
 
-  export function updateDataFlag2FirstHalf(dataArray) {
-    const isQuarterSumValid = () => {
-      const quarterSum = dataArray.reduce((sum, item) => {
-        if (item.flag === '2' && item.quarters && item.quarters[0]) {
-          sum += item.quarters[0].firstHalf;
-        }
-        return sum;
-      }, 0);
-      return quarterSum === 30;
-    };
-  
-    while (!isQuarterSumValid()) {
-      const flag2Objects = dataArray.filter((item) => item.flag === '2');
+  export function validateQuarter1FirstHalfFlag2PlayerPositions(dataArray) {
+
+    while (checkQuarterSum(0, dataArray) < 30) {
+      const flag2Objects = dataArray.filter((item) => item.flag === '2' && item.quarters[0].firstHalf === 0);
       const randomIndex = Math.floor(Math.random() * flag2Objects.length);
-      const randomObject = flag2Objects[randomIndex];
-  
-      randomObject.quarters[0].firstHalf = 5;
+
+      if (randomIndex >= 0) {
+        const randomObject = flag2Objects[randomIndex];
+        randomObject.quarters[0].firstHalf = 5;
+      } else {
+        // No more flag 2 objects with firstHalf at 0, break the loop
+        break;
+      }
     }
   
     return dataArray;

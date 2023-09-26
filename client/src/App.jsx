@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css'
 import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
-import { generateDataArrayWithLength, updateDataFlag1FirstHalfPriority, updateDataFlag2FirstHalf, updateDataFlag3 } from './helpers';
+import { generateDataArrayWithLength, validateQuarter1FirstHalfFlag1PlayerPositions, validateQuarter1FirstHalfFlag2PlayerPositions, validateQuarter1Flag3PlayerPositions } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
 import QuarterTable from './components/QuarterTable';
 
@@ -30,17 +30,24 @@ function App() {
       return row;
     }
     );
-    const flag3data = updateDataFlag3(updatedData);
-    const flag1data = updateDataFlag1FirstHalfPriority(flag3data);
-    const flag2data = updateDataFlag2FirstHalf(flag1data);
-    console.log('flag2data', flag2data)
-    setData(flag2data);
+
+    setData(updatedData);
   };
 
   const handlePlayerCountChange = (count) => {
     const initialDataArray = generateDataArrayWithLength(count);
     setData(initialDataArray);
   };
+
+  const handleLineup = async () => {
+    console.log('button clicked');
+    const iterationOne = await validateQuarter1Flag3PlayerPositions(data);
+    console.log('1', iterationOne);
+    const iterationTwo = await validateQuarter1FirstHalfFlag1PlayerPositions(iterationOne);
+    console.log('2', iterationTwo)
+    const iterationThree = await validateQuarter1FirstHalfFlag2PlayerPositions(iterationTwo);
+    console.log('3', iterationThree);
+  }
 
   return (
     <>
@@ -56,6 +63,7 @@ function App() {
             rowData={selectedRow != null ? selectedRow : { name: '', flag: ''}}
             onSave={handleSave}
             />
+            <button onClick={() => handleLineup()}>Confirm Lineup</button>
           </>
       }
     </div>
