@@ -17,7 +17,7 @@ export const EditTableModal = (modal) => {
     <div className={`modal ${modal.isOpen ? 'block' : 'hidden'}`}>
       <div className="modal-container">
         <div className="modal-content">
-          <h2>Edit Data</h2>
+          <h2>Edit Data</h2> 
           <div>
             <label>Name:</label>
             <input
