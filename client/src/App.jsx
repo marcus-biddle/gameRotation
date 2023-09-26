@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css'
 import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
@@ -9,10 +9,6 @@ function App() {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-
-  useEffect(() => {
-    
-  }, [data])
 
   const openModal = (row) => {
     setSelectedRow(row);

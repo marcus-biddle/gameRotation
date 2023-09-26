@@ -3,16 +3,24 @@ import './styled.css';
 
 export const EditTableModal = (modal) => {
   const [editedData, setEditedData] = useState({ ...modal.rowData });
+  const [error, setError] = useState(false);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setEditedData({ ...editedData, [name]: value });
   };
 
   const handleSave = () => {
-    const data = { ...editedData, position: modal.rowData.position}
-    modal.onSave(data);
-    modal.onClose();
-    setEditedData({ name: '', flag: '' })
+    if ((editedData.name && editedData.flag || (modal.rowData.name != '' && modal.rowData.flag != ''))) {
+      setError(false)
+      const data = { position: modal.rowData.position, name: editedData.name, flag: editedData.flag}
+      modal.onSave(data);
+      modal.onClose();
+      setEditedData({ name: '', flag: '' })
+      
+    } else {
+      setError(true)
+    }
+    
   };
 
   return (
@@ -25,7 +33,7 @@ export const EditTableModal = (modal) => {
             <input
               type="text"
               name="name"
-              value={editedData.name ? editedData.name : ''}
+              value={modal.rowData.name != '' ? modal.rowData.name : editedData.name}
               onChange={handleInputChange}
             />
           </div>
@@ -33,7 +41,7 @@ export const EditTableModal = (modal) => {
             <label>Flag:</label>
             <select
                 name="flag"
-                value={editedData.flag}
+                value={modal.rowData.flag != '' ? modal.rowData.flag : editedData.flag}
                 onChange={handleInputChange}
             >
                 <option value="" disabled>Select Flag</option>
@@ -42,7 +50,7 @@ export const EditTableModal = (modal) => {
                 <option value="3">3</option>
             </select>
         </div>
-
+          {error && <p>Please fill everything out</p>}
           <button onClick={handleSave}>Save</button>
         </div>
       </div>
