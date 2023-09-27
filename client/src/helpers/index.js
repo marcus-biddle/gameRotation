@@ -99,28 +99,37 @@ export function generateDataArrayWithLength(rowLength) {
     // Update flag 1 players if there are 6 or less of them
     // If half = 1, only update if the current amount of players time does not exceed 30 (minutes)
     // If half = 2, only update if the current amount of players time does not exceed 60 (minutes)
-    if (flag1Players <= 6 && timeLimit < maxTimeLimit) {
+    if (flag1Players.length <= 6 && timeLimit < maxTimeLimit) {
       flag1Players.forEach((player) => {
         // All flag 1 players should start the game
         if (quarter === 0 && half === 1) {
           player.quarters[quarter].firstHalf = 5;
+        }
+        // If player max time played is not 25 by the start of quarter 3 
+        // then let them play for both halves of last quarter
+        if (quarter === 3 && player.maxTimeAllowed === 15) {
+          player.quarters[quarter].firstHalf = 5;
+          player.quarters[quarter].secondHalf = 5;
         }
         // If it's the second half of a quarter and the player didn't play the first 
         // previous half, put them in the current quarter/half
         // OR
         // If player didn't play in the second half of the previous quarter (not including quarter 0)
         // Automatically put them in the current quarter/half
-        if ((half === 2 && player.quarters[quarter].firstHalf === 0) || (quarter !== 0 && half === 1 && player.quarters[quarter - 1].secondHalf)) {
+        if ((half === 2 && player.quarters[quarter].firstHalf === 0) || (quarter !== 0 && half === 1 && player.quarters[quarter - 1].secondHalf === 0)) {
           half === 1 ? player.quarters[quarter].firstHalf = 5 : player.quarters[quarter].secondHalf = 5;
         }
+
+        
       })
 
       if (quarter === 0 && half === 2) {
         // We want half of flag 1 players to play both halves of quarter 0
         let count = Math.floor(flag1Players.length / 2);
-
+        console.log('let count', count);
         // Set two random flag 1 players to play both halves of quarter 0.
         while (count > 0) {
+          console.log('while count', count);
           const freshPlayers = flag1Players.filter((player) => {
             if (player.quarters[quarter].secondHalf === 0) {
               return player;
@@ -162,33 +171,39 @@ export function generateDataArrayWithLength(rowLength) {
     // Get all players that did not play in the previous half
     // ignores quarter 0
     const freshPlayers = flag2Players.filter((player) => {
-      if (quarter !== 0 && ((player.quarters[quarter - 1].secondHalf === 0 && half === 1) || (player.quarters[quarter].firstHalf === 0 && half === 2))) {
+      if ((quarter !== 0) && ((player.quarters[quarter - 1].secondHalf === 0 && half === 1) || (player.quarters[quarter].firstHalf === 0 && half === 2))) {
+        return player;
+      }
+      if ((quarter === 0 && half === 2) && (player.quarters[quarter].firstHalf === 0 && half === 2)) {
         return player;
       }
     })
 
     // Any player that didn't play in the previous half (excluding quarter 0) gets to 
     // automatically play.
+    console.log('freshPlayers.length', freshPlayers.length);
     if (freshPlayers.length > 0) {
       freshPlayers.forEach((player) => {
         half === 1 ? player.quarters[quarter].firstHalf = 5 : player.quarters[quarter].secondHalf = 5
       })
     } 
 
-    // Get all players for Quarter 0 half 1
-    const activeQuarter0Players = flag2Players.filter((player) => {
-      if (quarter === 0 && player.quarters[quarter].firstHalf === 0) {
-        return player;
-      }
-    });
-
     // Loop through the quarter 0 half 1 players and fill remaining slots
-    while (checkQuarterSum(quarter, dataArray, 1) < timeLimit) {
+    while ((checkQuarterSum(quarter, dataArray, 1) < timeLimit) && half === 1) {
+
+      // Get all players for Quarter 0 half 1
+      const activeQuarter0Players = flag2Players.filter((player) => {
+        if (quarter === 0 && player.quarters[quarter].firstHalf === 0) {
+          return player;
+        }
+      });
 
       // If there are no flag 2 players or it's not quarter 0, end loop.
-      if (flag2Players.length === 0 || quarter != 0) break;
+      if (flag2Players.length === 0 || quarter !== 0 || activeQuarter0Players.length === 0) break;
 
       const randomIndex = Math.floor(Math.random() * activeQuarter0Players.length);
+
+      if (activeQuarter0Players.length === 0) break;
 
       // For quarter 0, continue giving a flag 2 player a slot until time limit is reached.
       if (randomIndex >= 0) {
@@ -196,15 +211,16 @@ export function generateDataArrayWithLength(rowLength) {
         if (half === 1) {
           randomObject.quarters[quarter].firstHalf = 5;
         } else {
-          randomObject.quarters[quarter].secondHalf = 5;
+          randomObject.quarters[quarter].firstHalf = 5;
         }
+        console.log('randomObj',randomObject.quarters[quarter].firstHalf, randomObject.quarters[quarter].firstHalf)
         
       }
     }
 
     // Get all players that are not currently playing
     const activePlayers = flag2Players.filter((player) => {
-      if (quarter !== 0 && player.quarters[quarter].firstHalf === 5 && player.quarters[quarter].secondHalf === 5) {
+      if (quarter !== 0 && ((half === 1 && player.quarters[quarter].firstHalf !== 5 )|| (half === 2 && player.quarters[quarter].secondHalf !== 5))) {
         return player;
       }
     });
@@ -214,7 +230,14 @@ export function generateDataArrayWithLength(rowLength) {
       if (activePlayers.length === 0) break;
         const randomIndex = Math.floor(Math.random() * activePlayers.length);
         half === 1 ? activePlayers[randomIndex].quarters[quarter].firstHalf = 5 : activePlayers[randomIndex].quarters[quarter].secondHalf = 5;
+    }
 
+    if (flag2Players.length !== 0 && quarter === 3) {
+      flag2Players.forEach((player) => {
+        if (player.maxTimeAllowed >= 20) {
+          player.quarters[quarter].secondHalf = 5
+        }
+      })
     }
 
     return dataArray;
@@ -226,7 +249,7 @@ export function updatePlayerTimeInQuarter(array, quarter) {
       if (item.quarters && item.quarters[quarter] && item.flag !== '3') {
         const currentQuarter = item.quarters[quarter];
           const sum = currentQuarter.firstHalf + currentQuarter.secondHalf;
-          item.maxTimeAllowed = sum;
+          item.maxTimeAllowed = item.maxTimeAllowed + sum;
       }
     });
 

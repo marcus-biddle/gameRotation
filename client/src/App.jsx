@@ -14,7 +14,8 @@ function App() {
   const [quarterData, setQuarterData] = useState({
     quarterOne: [],
     quarterTwo: [],
-    quarterThree: []
+    quarterThree: [],
+    quarterFour: []
   });
   const [playerCount, setPlayerCount] = useState(0);
   console.log(playerCount)
@@ -75,6 +76,7 @@ function App() {
     {quarterData.quarterOne.length > 0 && <QuarterTable name={'First'} data={quarterData.quarterOne} quarter={0}/>}
     {quarterData.quarterTwo.length > 0 && <QuarterTable name={'Second'} data={quarterData.quarterTwo} quarter={1}/>}
     {quarterData.quarterThree.length > 0 && <QuarterTable name={'Third'} data={quarterData.quarterThree} quarter={2}/>}
+    {quarterData.quarterFour.length > 0 && <QuarterTable name={'Fourth'} data={quarterData.quarterFour} quarter={3}/>}
     </>
   )
 }
