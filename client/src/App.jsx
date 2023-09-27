@@ -2,14 +2,20 @@ import { useState } from 'react';
 import './App.css'
 import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
-import { generateDataArrayWithLength, validateQuarter1FirstHalfFlag1PlayerPositions, validateQuarter1FirstHalfFlag2PlayerPositions, validateQuarter1Flag3PlayerPositions } from './helpers';
+import { generateDataArrayWithLength } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
 import QuarterTable from './components/QuarterTable';
+import usePlayerPositioning from './hooks/usePlayerPositioning';
 
 function App() {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [quarterData, setQuarterData] = useState({
+    quarterOne: [],
+    quarterTwo: []
+  });
+  const [playerCount, setPlayerCount] = useState(0);
 
   console.log(data);
 
@@ -37,16 +43,13 @@ function App() {
   const handlePlayerCountChange = (count) => {
     const initialDataArray = generateDataArrayWithLength(count);
     setData(initialDataArray);
+    setPlayerCount(count);
   };
 
   const handleLineup = async () => {
-    console.log('button clicked');
-    const iterationOne = await validateQuarter1Flag3PlayerPositions(data);
-    console.log('1', iterationOne);
-    const iterationTwo = await validateQuarter1FirstHalfFlag1PlayerPositions(iterationOne);
-    console.log('2', iterationTwo)
-    const iterationThree = await validateQuarter1FirstHalfFlag2PlayerPositions(iterationTwo);
-    console.log('3', iterationThree);
+    const playerData = await usePlayerPositioning(data);
+    setQuarterData(playerData);
+    console.log(playerData)
   }
 
   return (
@@ -67,7 +70,8 @@ function App() {
           </>
       }
     </div>
-    {data.length > 0 && <QuarterTable name={'First'} data={data} />}
+    {quarterData.quarterOne.length > 0 && <QuarterTable name={'First'} data={quarterData.quarterOne} quarter={0}/>}
+    {quarterData.quarterTwo.length > 0 && <QuarterTable name={'Second'} data={quarterData.quarterTwo} quarter={1}/>}
     </>
   )
 }

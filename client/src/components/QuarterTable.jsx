@@ -1,6 +1,7 @@
 
 
 const QuarterTable = (quarter) => {
+  console.log(quarter);
     return (
       <div key={quarter.name}>
         <h2>{quarter.name} Quarter</h2>
@@ -13,13 +14,15 @@ const QuarterTable = (quarter) => {
             </tr>
           </thead>
           <tbody>
-            {quarter.data.map((item) => (
+            {quarter.data.map((item) => {
+              console.log(item)
+            return (
               <tr key={item.position}>
                 <td>{item.name}</td>
-                <td>{item.quarters.first}</td>
-                <td>{item.quarters.second}</td>
+                <td>{item.quarters[quarter.quarter].firstHalf}</td>
+                <td>{item.quarters[quarter.quarter].secondHalf}</td>
               </tr>
-            ))}
+            )})}
           </tbody>
         </table>
       </div>
