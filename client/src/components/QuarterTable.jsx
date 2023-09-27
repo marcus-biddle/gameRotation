@@ -1,7 +1,7 @@
 
 
 const QuarterTable = (quarter) => {
-  console.log(quarter);
+  console.log('table props', quarter);
     return (
       <div key={quarter.name}>
         <h2>{quarter.name} Quarter</h2>
@@ -15,7 +15,6 @@ const QuarterTable = (quarter) => {
           </thead>
           <tbody>
             {quarter.data.map((item) => {
-              console.log(item)
             return (
               <tr key={item.position}>
                 <td>{item.name}</td>

@@ -5,7 +5,7 @@ import { PlayerPositionTable } from './components/PlayerPositionTable';
 import { generateDataArrayWithLength } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
 import QuarterTable from './components/QuarterTable';
-import playerPositioning from './utils/playerPositioning';
+import { createPlayerSchedule } from './utils/createPlayerSchedule';
 
 function App() {
   const [data, setData] = useState([]);
@@ -13,7 +13,8 @@ function App() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [quarterData, setQuarterData] = useState({
     quarterOne: [],
-    quarterTwo: []
+    quarterTwo: [],
+    quarterThree: []
   });
   const [playerCount, setPlayerCount] = useState(0);
   console.log(playerCount)
@@ -48,9 +49,9 @@ function App() {
   };
 
   const handleLineup = async () => {
-    const playerData = await playerPositioning(data);
+    const playerData = await createPlayerSchedule(data);
     setQuarterData(playerData);
-    console.log(playerData)
+    console.log('handleLineup',playerData)
   }
 
   return (
@@ -73,6 +74,7 @@ function App() {
     </div>
     {quarterData.quarterOne.length > 0 && <QuarterTable name={'First'} data={quarterData.quarterOne} quarter={0}/>}
     {quarterData.quarterTwo.length > 0 && <QuarterTable name={'Second'} data={quarterData.quarterTwo} quarter={1}/>}
+    {quarterData.quarterThree.length > 0 && <QuarterTable name={'Third'} data={quarterData.quarterThree} quarter={2}/>}
     </>
   )
 }
