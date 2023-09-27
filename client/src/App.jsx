@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css'
 import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
-import { generateDataArrayWithLength } from './helpers';
+import { generateDataArrayWithLength, resetQuartersData } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
 import QuarterTable from './components/QuarterTable';
 import { createPlayerSchedule } from './utils/createPlayerSchedule';
@@ -50,7 +50,8 @@ function App() {
   };
 
   const handleLineup = async () => {
-    const playerData = await createPlayerSchedule(data);
+    const freshData = await resetQuartersData(data);
+    const playerData = await createPlayerSchedule(freshData);
     setQuarterData(playerData);
     console.log('handleLineup',playerData)
   }

@@ -28,7 +28,27 @@ export function generateDataArrayWithLength(rowLength) {
   
     return dataArray;
   }
-  
+
+export function resetQuartersData(dataArray) {
+  // Iterate through each object in the array
+  for (let i = 0; i < dataArray.length; i++) {
+    const player = dataArray[i];
+
+    // Iterate through each quarter
+    for (let quarterIndex = 0; quarterIndex < player.quarters.length; quarterIndex++) {
+      player.quarters[quarterIndex].firstHalf = 0;
+      player.quarters[quarterIndex].secondHalf = 0;
+    }
+
+    // Reset maxTimeAllowed to 0
+    if (player.flag !== '3') {
+      player.maxTimeAllowed = 0;
+    }
+  }
+
+  return dataArray;
+}
+
  export function updateFlag3PlayerPositions(dataArray) {
   console.log('function');
     const updatedDataArray = dataArray.map((item) => {
