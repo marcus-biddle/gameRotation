@@ -5,7 +5,7 @@ import { PlayerPositionTable } from './components/PlayerPositionTable';
 import { generateDataArrayWithLength } from './helpers';
 import { EditTableModal } from './components/EditTableModal';
 import QuarterTable from './components/QuarterTable';
-import usePlayerPositioning from './hooks/usePlayerPositioning';
+import playerPositioning from './utils/playerPositioning';
 
 function App() {
   const [data, setData] = useState([]);
@@ -16,6 +16,7 @@ function App() {
     quarterTwo: []
   });
   const [playerCount, setPlayerCount] = useState(0);
+  console.log(playerCount)
 
   console.log(data);
 
@@ -47,7 +48,7 @@ function App() {
   };
 
   const handleLineup = async () => {
-    const playerData = await usePlayerPositioning(data);
+    const playerData = await playerPositioning(data);
     setQuarterData(playerData);
     console.log(playerData)
   }

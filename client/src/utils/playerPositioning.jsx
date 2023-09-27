@@ -1,6 +1,6 @@
 import { updateFlag1PlayerPositions, updateFlag2PlayerPositions, updateFlag3PlayerPositions, updatePlayerTimeInQuarter } from '../helpers';
 
-const usePlayerPositioning = async (data) => {
+const playerPositioning = async (data) => {
     // First Half of quarter 1
     const iterationOne = await updateFlag3PlayerPositions(data);
     const iterationTwo = await updateFlag1PlayerPositions(iterationOne, 0, 1);
@@ -22,4 +22,4 @@ const usePlayerPositioning = async (data) => {
   }
 }
 
-export default usePlayerPositioning
+export default playerPositioning
