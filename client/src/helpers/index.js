@@ -266,6 +266,35 @@ export function updateFlag2PlayerPositions(dataArray, quarter, half) {
 
   return dataArray;
 }
+
+export function createFlag1Positions(array) {
+  const flag1Players = array.filter((player) => {
+    if (player.flag === '1') {
+      return player;
+    }
+  });
+
+  const flag1PlayerCount = flag1Players.length;
+  if (flag1PlayerCount === 0) return array;
+  const playerMaxTime = 
+  flag1PlayerCount === 1 ? 40 
+  : flag1PlayerCount === 2 ? 35 
+  : flag1PlayerCount === 3 ? 30 : 25;
+
+  const eachPlayerOnFieldCount = playerMaxTime / 5;
+  const restTimeCount = playerMaxTime === 40 ? 0 : (40 - playerMaxTime) / 5;
+  const activePlayerArray = Array(eachPlayerOnFieldCount).fill(5);
+  const restArray = Array(restTimeCount).fill(0);
+  
+  const playerTimeArray = activePlayerArray.concat(restArray);
+
+  flag1Players.forEach((player) => {
+    // randomize rest times
+    const playerPositioning = randomizePositioning(playerTimeArray);
+  })
+
+  return array
+}
   
 export function updatePlayerTimeInQuarter(array, quarter) {
   
@@ -278,4 +307,73 @@ export function updatePlayerTimeInQuarter(array, quarter) {
     });
 
   return array;
+}
+
+export function sortArrayWithNoAdjacentZeros(arr) {
+  // Separate the array into two subarrays: one for non-zero values and one for zeros
+  const nonZeroArray = arr.filter((value) => value !== 0);
+  const zeroArray = arr.filter((value) => value === 0);
+
+  // Initialize the result array
+  const result = [];
+
+  // Merge the non-zero values and zeros alternatively
+  while (nonZeroArray.length > 0 || zeroArray.length > 0) {
+    if (nonZeroArray.length > 0) {
+      result.push(nonZeroArray.shift());
+    }
+    if (zeroArray.length > 0) {
+      result.push(zeroArray.shift());
+    }
+  }
+
+  return result;
+}
+
+// Example usage:
+// const inputArray = [5, 5, 0, 5, 0, 0, 5];
+// const sortedArray = sortArrayWithNoAdjacentZeros(inputArray);
+// console.log(sortedArray); // Output: [5, 0, 5, 0, 5, 0, 5]
+
+export function randomizePositioning(arr) {
+  // Separate the array into two subarrays: one for non-zero values and one for zeros
+  const nonZeroArray = arr.filter((value) => value !== 0);
+  const zeroArray = arr.filter((value) => value === 0);
+
+  // Shuffle the zeroArray randomly
+  const shuffledZeroArray = shuffleArray(zeroArray);
+
+  // Initialize the result array
+  const result = [];
+
+  // Initialize a flag to track if the previous element was zero
+  let prevWasZero = false;
+
+  // Merge the non-zero values and shuffled zeros ensuring no adjacent zeros
+  for (const value of shuffledZeroArray) {
+    if (prevWasZero) {
+      // If the previous element was zero, add a non-zero value to break adjacency
+      result.push(nonZeroArray.shift());
+      prevWasZero = false;
+    }
+    result.push(value);
+    prevWasZero = value === 0;
+  }
+
+  // Add any remaining non-zero values
+  while (nonZeroArray.length > 0) {
+    result.push(nonZeroArray.shift());
+  }
+
+  return result;
+}
+
+// Function to shuffle an array randomly
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
