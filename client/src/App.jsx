@@ -18,6 +18,7 @@ function App() {
     quarterFour: []
   });
   const [playerCount, setPlayerCount] = useState(0);
+  const [err, setErr] = useState('');
   console.log(playerCount)
 
   console.log(data);
@@ -45,8 +46,13 @@ function App() {
 
   const handlePlayerCountChange = (count) => {
     const initialDataArray = generateDataArrayWithLength(count);
-    setData(initialDataArray);
-    setPlayerCount(count);
+    if (count >= 6 && count <= 10) {
+      setData(initialDataArray);
+      setPlayerCount(count);
+    } else {
+      setErr("Cannot create a team unless between 6-10 players.")
+    }
+    
   };
 
   const handleLineup = async () => {
@@ -61,7 +67,10 @@ function App() {
       <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Player Count App</h1>
       {!data.length > 0
-        ? <PlayerCountInput onPlayerCountChange={handlePlayerCountChange} />
+        ? <>
+            <PlayerCountInput onPlayerCountChange={handlePlayerCountChange} />
+            <p>{err}</p>
+          </>
         : <>
           <PlayerPositionTable rows={data} onModal={openModal} isModalOpen={isModalOpen} />
           <EditTableModal
