@@ -49,6 +49,47 @@ export function resetQuartersData(dataArray) {
   return dataArray;
 }
 
+export function createFlag2Positions(array) {
+  const flag2Players = array.filter((player) => {
+    if (player.flag === '2') {
+      return player;
+    }
+  });
+
+  const activePlayerArray = Array(4).fill(5);
+  const restArray = Array(4).fill(0);
+  const playerTimeArray = activePlayerArray.concat(restArray);
+
+  flag2Players.forEach((player) => {
+    // randomize rest times
+    const playerPositioning = randomizePositioning(playerTimeArray);
+
+    player.quarter.forEach((quarter, index) => {
+      quarter.firstHalf = playerPositioning[index + 2 % 2] // 0, 1, 0
+      quarter.secondHalf = playerPositioning[index + 3 % 2] // 1, 0, 1 
+      playerPositioning.splice(index + 2 % 2, 2);
+    });
+
+    player.maxTimeAllowed = 20;
+  })
+
+  // validate each half is adds up to 30
+  for (let x = 0; x < 4; x++) {
+    for (let y = 0; y < 8; y++) {
+      const quarter = checkQuarterSum(x, array, (y + 3 % 2))
+      while (quarter <= 30) {
+        const inactivePlayers = flag2Players.filter((player) => {
+          y === 1 ? player.quarters[x].firstHalf === 0 : player.quarters[x].firstHalf === 0
+        });
+        y === 1 ? inactivePlayers[0].quarters[x].firstHalf = 5 : inactivePlayers[0].quarters[x].secondHalf = 5
+      }
+    }
+  }
+
+  return array
+}
+
+// Deprecated
 export function updateFlag3PlayerPositions(dataArray) {
 console.log('function');
   const updatedDataArray = dataArray.map((item) => {
@@ -97,7 +138,7 @@ export function checkQuarterSum(quarterIndex, dataArray, half) {
         const sum = quarter.firstHalf;
         totalSum += sum;
       } else {
-        const sum = quarter.firstHalf + quarter.secondHalf;
+        const sum = quarter.secondHalf;
         totalSum += sum;
       }
       
@@ -107,6 +148,7 @@ export function checkQuarterSum(quarterIndex, dataArray, half) {
   return totalSum;
 }
 
+// Deprecated
 export function updateFlag1PlayerPositions(dataArray, quarter, half) {
   // Get all players with flag 1
   const flag1Players = dataArray.filter((item) => item.flag === '1');
@@ -180,6 +222,7 @@ export function updateFlag1PlayerPositions(dataArray, quarter, half) {
   return dataArray;
 }
 
+// Deprecated
 export function updateFlag2PlayerPositions(dataArray, quarter, half) {
   const timeLimit = 30 * half;
 
@@ -291,11 +334,19 @@ export function createFlag1Positions(array) {
   flag1Players.forEach((player) => {
     // randomize rest times
     const playerPositioning = randomizePositioning(playerTimeArray);
+
+    player.quarter.forEach((quarter, index) => {
+      quarter.firstHalf = playerPositioning[index + 2 % 2] // 0, 1, 0
+      quarter.secondHalf = playerPositioning[index + 3 % 2] // 1, 0, 1 
+      playerPositioning.splice(index + 2 % 2, 2);
+    });
+
+    player.maxTimeAllowed = playerMaxTime;
   })
 
   return array
 }
-  
+  // Deprecated
 export function updatePlayerTimeInQuarter(array, quarter) {
   
     array.forEach((item) => {
