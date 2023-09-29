@@ -56,39 +56,52 @@ export function createFlag2Positions(array) {
     }
   });
 
-  const activePlayerArray = Array(4).fill(5);
-  const restArray = Array(4).fill(0);
-  const playerTimeArray = activePlayerArray.concat(restArray);
-
+  
+// set all halves to 5
   flag2Players.forEach((player) => {
     // randomize rest times
-    const playerPositioning = randomizePositioning(playerTimeArray);
+    player.maxTimeAllowed = 40;
 
-    player.quarters.forEach((quarter, index) => {
-      quarter.firstHalf = playerPositioning[index + 2 % 2] // 0, 1, 0
-      quarter.secondHalf = playerPositioning[index + 3 % 2] // 1, 0, 1 
-      playerPositioning.splice(0, 1);
+    player.quarters.forEach((quarter) => {
+      quarter.firstHalf = 5
+      quarter.secondHalf = 5
     });
 
-    player.maxTimeAllowed = 20;
+    
   })
+
+  console.log('flag2Players', flag2Players)
+
+
 
   // validate each half is adds up to 30
   for (let x = 0; x < 4; x++) {
     for (let y = 0; y < 8; y++) {
-      console.log('variables',x, array, (y +3 % 2))
-      const quarter = checkQuarterSum(x, array, (y + 3 % 2))
+      console.log('variables',x, array, (y + 2 % 2))
+      let quarter = checkQuarterSum(x, array, (y + 2 % 2))
       console.log('quarter', quarter);
-      while (quarter < 30) {
-        const inactivePlayers = flag2Players.filter((player) => {
-          (y +3 % 2) === 1 ? player.quarters[x].firstHalf === 0 : player.quarters[x].firstHalf === 0
+      
+
+      if (quarter > 30) {
+        const activePlayers = flag2Players.filter((player) => {
+          if ((y + 2 % 2) === 1 ? player.quarters[x].firstHalf === 5 : player.quarters[x].firstHalf === 5) {
+            return player;
+          }
         });
-        console.log(inactivePlayers);
-        (y +3 % 2) === 1 ? inactivePlayers[0].quarters[x].firstHalf = 5 : inactivePlayers[0].quarters[x].secondHalf = 5
+
+        // flag1 players seem fine, so focus here
+        // we want to get all flag 2 players in the half and make them inactive until there's 6players (30min)
+        // on the field.
+        console.log(activePlayers, (y + 3 % 2), quarter);
+        // activePlayers.reduce((prev, current) => (prev.maxTimeAllowed > current.maxTimeAllowed ? prev : current));
+        // (y + 2 % 2) === 1 ? activePlayers[0].quarters[x].firstHalf = 0 : activePlayers[0].quarters[x].secondHalf = 0;
+        // console.log(activePlayers[0], quarter)
+        // activePlayers[0].maxTimeAllowed = activePlayers[0].maxTimeAllowed - 5
+        // quarter = quarter - 5;
       }
     }
   }
-
+console.log('ARRAY',array)
   return array
 }
 
@@ -331,27 +344,30 @@ export function createFlag1Positions(array) {
   const eachPlayerOnFieldCount = playerMaxTime / 5;
   const restTimeCount = playerMaxTime === 40 ? 0 : (40 - playerMaxTime) / 5;
   console.log('resttime', restTimeCount);
-  const activePlayerArray = Array(eachPlayerOnFieldCount).fill(5);
-  const restArray = Array(restTimeCount).fill(0);
-  console.log('active rest arrays',activePlayerArray, restArray)
   
-  const playerTimeArray = activePlayerArray.concat(restArray);
-  console.log(playerTimeArray)
-
 
   flag1Players.forEach((player) => {
     // randomize rest times
-    const playerPositioning = randomizePositioning(playerTimeArray);
+    let sumTime = 0;
 
-    player.quarters.forEach((quarter, index) => {
-      quarter.firstHalf = playerPositioning[index + 2 % 2] // 0, 1, 0
-      quarter.secondHalf = playerPositioning[index + 3 % 2] // 1, 0, 1 
-      playerPositioning.splice(0, 1);
+    const activePlayerArray = Array(eachPlayerOnFieldCount).fill(5);
+    const restArray = Array(restTimeCount).fill(0);
+    const playerArray = activePlayerArray.concat(restArray);
+    const playerPositioning = randomizePositioning(playerArray);
+    
+    console.log('playerPosition', playerPositioning);
+    player.quarters.forEach((quarter) => {
+      quarter.firstHalf = playerPositioning[0] // 0, 1, 0
+      quarter.secondHalf = playerPositioning[1] // 1, 0, 1 
+      playerPositioning.splice(0, 2);
+      sumTime = sumTime + (quarter.firstHalf + quarter.secondHalf)
     });
 
-    player.maxTimeAllowed = playerMaxTime;
+    player.maxTimeAllowed = sumTime;
+    
   })
 
+  console.log('flag1Players', flag1Players)
   return array
 }
   // Deprecated
@@ -395,54 +411,61 @@ export function sortArrayWithNoAdjacentZeros(arr) {
 // console.log(sortedArray); // Output: [5, 0, 5, 0, 5, 0, 5]
 
 export function randomizePositioning(arr) {
-  // Separate the array into two subarrays: one for non-zero values and one for zeros
-  const nonZeroArray = arr.filter((value) => value !== 0);
-  const zeroArray = arr.filter((value) => value === 0);
-
-  const shuffledArray = shuffleArray(arr);
-
-  // Initialize the result array
-  const result = [];
-
-  // Initialize a flag to track if the previous element was zero
-  let prevWasZero = false;
-
-  // Merge the non-zero values and shuffled zeros ensuring no adjacent zeros
-  for (const value of shuffledArray) {
-    if (prevWasZero) {
-      // If the previous element was zero, add a non-zero value to break adjacency
-      // result.shift();
-      
-      result.push(nonZeroArray.shift());
-      prevWasZero = false;
+  console.log('START RANDOMIZATION')
+  const nonZeroIndices = arr.reduce((indices, value, index) => {
+    if (value !== 0) {
+      indices.push(index);
     }
-    result.push(value);
-    prevWasZero = value === 0;
-    while( result.length > arr.length) {
-      result.shift();
-      result.pop();
-      result.push(0);
-    }
+    return indices;
+  }, []);
+
+  const sortedArray = Array.from({ length: arr.length }, () => 0);
+
+  for (let i = 0; i < nonZeroIndices.length; i++) {
+    sortedArray[i * 2] = arr[nonZeroIndices[i]];
   }
 
-  // Add any remaining non-zero values
-  // while (nonZeroArray.length > 0) {
-  //   result.push(nonZeroArray.shift());
-  // }
-console.log('RESULS',arr, result);
-  return result;
-}
+  if (sortedArray.length > 8) {
+    const zeroIndices = [];
 
+    // Get an array of indices for where the 0's are in the array
+    for (let i = 0; i < sortedArray.length; i++) {
+      if (arr[i] === 0) {
+        zeroIndices.push(i);
+      }
+    }
 
-
-
-
-// Function to shuffle an array randomly
-function shuffleArray(array) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const randomIndex = Math.floor(Math.random() * 4);
+    const zeroIndex = zeroIndices[randomIndex];
+    sortedArray[zeroIndex] = 5;
+    sortedArray.pop();
   }
-  return shuffled;
+
+  const randomIndex = Math.floor(Math.random() * 2);
+
+  randomIndex === 0 ? sortedArray.reverse() : sortedArray;
+
+  const nonZeroNewArray = sortedArray.filter((value) => value !== 0);
+
+  // const zeros = sortedArray.filter((value) => value === 0);
+
+  console.log('RANDOMIZE', nonZeroNewArray.length, nonZeroIndices.length)
+
+  if (nonZeroNewArray.length < nonZeroIndices.length) {
+    const zeroIndices = [];
+
+    // Get an array of indices for where the 0's are in the array
+    for (let i = 0; i < sortedArray.length; i++) {
+      if (sortedArray[i] === 0) {
+        zeroIndices.push(i);
+      }
+    }
+
+    const randomIndex = Math.floor(Math.random() * zeroIndices.length);
+    const zeroIndex = zeroIndices[randomIndex];
+    sortedArray[zeroIndex] = 5;
+    console.log('SORTEDARAY', sortedArray[zeroIndex], zeroIndex)
+  } 
+
+  return sortedArray;
 }
