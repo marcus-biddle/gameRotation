@@ -64,10 +64,10 @@ export function createFlag2Positions(array) {
     // randomize rest times
     const playerPositioning = randomizePositioning(playerTimeArray);
 
-    player.quarter.forEach((quarter, index) => {
+    player.quarters.forEach((quarter, index) => {
       quarter.firstHalf = playerPositioning[index + 2 % 2] // 0, 1, 0
       quarter.secondHalf = playerPositioning[index + 3 % 2] // 1, 0, 1 
-      playerPositioning.splice(index + 2 % 2, 2);
+      playerPositioning.splice(0, 1);
     });
 
     player.maxTimeAllowed = 20;
@@ -76,12 +76,15 @@ export function createFlag2Positions(array) {
   // validate each half is adds up to 30
   for (let x = 0; x < 4; x++) {
     for (let y = 0; y < 8; y++) {
+      console.log('variables',x, array, (y +3 % 2))
       const quarter = checkQuarterSum(x, array, (y + 3 % 2))
-      while (quarter <= 30) {
+      console.log('quarter', quarter);
+      while (quarter < 30) {
         const inactivePlayers = flag2Players.filter((player) => {
-          y === 1 ? player.quarters[x].firstHalf === 0 : player.quarters[x].firstHalf === 0
+          (y +3 % 2) === 1 ? player.quarters[x].firstHalf === 0 : player.quarters[x].firstHalf === 0
         });
-        y === 1 ? inactivePlayers[0].quarters[x].firstHalf = 5 : inactivePlayers[0].quarters[x].secondHalf = 5
+        console.log(inactivePlayers);
+        (y +3 % 2) === 1 ? inactivePlayers[0].quarters[x].firstHalf = 5 : inactivePlayers[0].quarters[x].secondHalf = 5
       }
     }
   }
@@ -136,6 +139,7 @@ export function checkQuarterSum(quarterIndex, dataArray, half) {
       const quarter = item.quarters[quarterIndex];
       if (half === 1) {
         const sum = quarter.firstHalf;
+        console.log(sum, 'sum')
         totalSum += sum;
       } else {
         const sum = quarter.secondHalf;
@@ -326,19 +330,23 @@ export function createFlag1Positions(array) {
 
   const eachPlayerOnFieldCount = playerMaxTime / 5;
   const restTimeCount = playerMaxTime === 40 ? 0 : (40 - playerMaxTime) / 5;
+  console.log('resttime', restTimeCount);
   const activePlayerArray = Array(eachPlayerOnFieldCount).fill(5);
   const restArray = Array(restTimeCount).fill(0);
+  console.log('active rest arrays',activePlayerArray, restArray)
   
   const playerTimeArray = activePlayerArray.concat(restArray);
+  console.log(playerTimeArray)
+
 
   flag1Players.forEach((player) => {
     // randomize rest times
     const playerPositioning = randomizePositioning(playerTimeArray);
 
-    player.quarter.forEach((quarter, index) => {
+    player.quarters.forEach((quarter, index) => {
       quarter.firstHalf = playerPositioning[index + 2 % 2] // 0, 1, 0
       quarter.secondHalf = playerPositioning[index + 3 % 2] // 1, 0, 1 
-      playerPositioning.splice(index + 2 % 2, 2);
+      playerPositioning.splice(0, 1);
     });
 
     player.maxTimeAllowed = playerMaxTime;
@@ -391,8 +399,7 @@ export function randomizePositioning(arr) {
   const nonZeroArray = arr.filter((value) => value !== 0);
   const zeroArray = arr.filter((value) => value === 0);
 
-  // Shuffle the zeroArray randomly
-  const shuffledZeroArray = shuffleArray(zeroArray);
+  const shuffledArray = shuffleArray(arr);
 
   // Initialize the result array
   const result = [];
@@ -401,23 +408,34 @@ export function randomizePositioning(arr) {
   let prevWasZero = false;
 
   // Merge the non-zero values and shuffled zeros ensuring no adjacent zeros
-  for (const value of shuffledZeroArray) {
+  for (const value of shuffledArray) {
     if (prevWasZero) {
       // If the previous element was zero, add a non-zero value to break adjacency
+      // result.shift();
+      
       result.push(nonZeroArray.shift());
       prevWasZero = false;
     }
     result.push(value);
     prevWasZero = value === 0;
+    while( result.length > arr.length) {
+      result.shift();
+      result.pop();
+      result.push(0);
+    }
   }
 
   // Add any remaining non-zero values
-  while (nonZeroArray.length > 0) {
-    result.push(nonZeroArray.shift());
-  }
-
+  // while (nonZeroArray.length > 0) {
+  //   result.push(nonZeroArray.shift());
+  // }
+console.log('RESULS',arr, result);
   return result;
 }
+
+
+
+
 
 // Function to shuffle an array randomly
 function shuffleArray(array) {
