@@ -82,9 +82,9 @@ export function createFlag2Positions(array) {
       console.log('quarter', quarter);
       
 
-      if (quarter > 30) {
-        const activePlayers = flag2Players.filter((player) => {
-          if ((y + 2 % 2) === 1 ? player.quarters[x].firstHalf === 5 : player.quarters[x].firstHalf === 5) {
+      while (quarter > 30) {
+        const activePlayers = array.filter((player) => {
+          if (player.flag === '2' && player.maxTimeAllowed > 20 && ((y + 2 % 2) === 1 ? player.quarters[x].firstHalf === 5 : player.quarters[x].firstHalf === 5)) {
             return player;
           }
         });
