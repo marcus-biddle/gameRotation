@@ -40,13 +40,45 @@ export function resetQuartersData(dataArray) {
       player.quarters[quarterIndex].secondHalf = 0;
     }
 
-    // Reset maxTimeAllowed to 0
-    if (player.flag !== '3') {
-      player.maxTimeAllowed = 0;
-    }
+    player.maxTimeAllowed = 0;
   }
 
   return dataArray;
+}
+
+export function createFlag3Positions(array) {
+
+      const flag2Players = array.filter((player) => {
+        if (player.flag === '3') {
+          return player
+        }
+      })
+
+      flag2Players.forEach((player, index) => {
+        if ((index + 2) % 2) {
+          player.quarters[0].firstHalf = 0;
+          player.quarters[0].secondHalf = 5;
+          player.quarters[1].firstHalf = 0;
+          player.quarters[1].secondHalf = 5;
+          player.quarters[2].firstHalf = 0;
+          player.quarters[2].secondHalf = 5;
+          player.quarters[3].firstHalf = 0;
+          player.quarters[3].secondHalf = 5;
+        } else {
+          player.quarters[0].firstHalf = 5;
+          player.quarters[0].secondHalf = 0;
+          player.quarters[1].firstHalf = 5;
+          player.quarters[1].secondHalf = 0;
+          player.quarters[2].firstHalf = 5;
+          player.quarters[2].secondHalf = 0;
+          player.quarters[3].firstHalf = 5;
+          player.quarters[3].secondHalf = 0;
+        }
+
+        player.maxTimeAllowed = 20;
+      })
+
+  return array;
 }
 
 export function createFlag2Positions(array) {
@@ -70,34 +102,53 @@ export function createFlag2Positions(array) {
     
   })
 
-  console.log('flag2Players', flag2Players)
+  console.log('flag2Players!', flag2Players)
 
 
 
   // validate each half is adds up to 30
   for (let x = 0; x < 4; x++) {
     for (let y = 0; y < 8; y++) {
-      console.log('variables',x, array, (y + 2 % 2))
-      let quarter = checkQuarterSum(x, array, (y + 2 % 2))
-      console.log('quarter', quarter);
-      
+      let quarter = checkQuarterSum(x, array, ((y + 2) % 2))
+      console.log('check', quarter);
 
       while (quarter > 30) {
+        let hasToPlay = false;
         const activePlayers = array.filter((player) => {
-          if (player.flag === '2' && player.maxTimeAllowed > 20 && ((y + 2 % 2) === 1 ? player.quarters[x].firstHalf === 5 : player.quarters[x].firstHalf === 5)) {
-            return player;
+          if ( x !== 0 && player.flag === '2' && (((y + 2) % 2) === 1 ? player.quarters[x].firstHalf === 0 : player.quarters[x - 1].secondHalf === 0)) {
+            hasToPlay = true;
+            return player
+          } else if (x === 0) {
+            if (player.flag === '2' && player.maxTimeAllowed > 20 && (((y + 2) % 2) === 1 ? player.quarters[x].firstHalf === 5 : player.quarters[x].secondHalf === 5)) {
+              hasToPlay = false;
+              return player;
+            }
           }
+          
         });
+        // after this, set everyone else to be 0?
+
+        if (hasToPlay === true) {
+          activePlayers.forEach((player) => {
+            player.maxTimeAllowed = player.maxTimeAllowed - 5
+          })
+          quarter = quarter - 5;
+          continue;
+          
+        }
 
         // flag1 players seem fine, so focus here
         // we want to get all flag 2 players in the half and make them inactive until there's 6players (30min)
         // on the field.
         console.log(activePlayers, (y + 3 % 2), quarter);
-        // activePlayers.reduce((prev, current) => (prev.maxTimeAllowed > current.maxTimeAllowed ? prev : current));
-        // (y + 2 % 2) === 1 ? activePlayers[0].quarters[x].firstHalf = 0 : activePlayers[0].quarters[x].secondHalf = 0;
-        // console.log(activePlayers[0], quarter)
-        // activePlayers[0].maxTimeAllowed = activePlayers[0].maxTimeAllowed - 5
-        // quarter = quarter - 5;
+        if (activePlayers.length > 0) {
+          const player = activePlayers.reduce((prev, current) => (prev.maxTimeAllowed > current.maxTimeAllowed ? prev : current));
+          console.log('PLAYER', player, quarter);
+          (y + 2 % 2) === 1 ? player.quarters[x].firstHalf = 0 : player.quarters[x].secondHalf = 0;
+          player.maxTimeAllowed = player.maxTimeAllowed - 5
+        }
+        
+        quarter = quarter - 5;
       }
     }
   }
@@ -120,12 +171,12 @@ console.log('function');
       if (shouldSetFirstHalf) {
         item.quarters[0].firstHalf = 0;
         item.quarters[0].secondHalf = 5;
-        item.quarters[1].firstHalf = 5;
-        item.quarters[1].secondHalf = 0;
-        item.quarters[2].firstHalf = 5;
-        item.quarters[2].secondHalf = 0;
-        item.quarters[3].firstHalf = 5;
-        item.quarters[3].secondHalf = 0;
+        item.quarters[1].firstHalf = 0;
+        item.quarters[1].secondHalf = 5;
+        item.quarters[2].firstHalf = 0;
+        item.quarters[2].secondHalf = 5;
+        item.quarters[3].firstHalf = 0;
+        item.quarters[3].secondHalf = 5;
       } else {
         item.quarters[0].firstHalf = 0;
         item.quarters[0].secondHalf = 5;
@@ -133,8 +184,8 @@ console.log('function');
         item.quarters[1].secondHalf = 5;
         item.quarters[2].firstHalf = 0;
         item.quarters[2].secondHalf = 5;
-        item.quarters[3].secondHalf = 0;
-        item.quarters[3].firstHalf = 5;
+        item.quarters[3].firstHalfHalf = 0;
+        item.quarters[3].secondHalf = 5;
       }
     }
 
@@ -152,7 +203,6 @@ export function checkQuarterSum(quarterIndex, dataArray, half) {
       const quarter = item.quarters[quarterIndex];
       if (half === 1) {
         const sum = quarter.firstHalf;
-        console.log(sum, 'sum')
         totalSum += sum;
       } else {
         const sum = quarter.secondHalf;
@@ -336,13 +386,14 @@ export function createFlag1Positions(array) {
 
   const flag1PlayerCount = flag1Players.length;
   if (flag1PlayerCount === 0) return array;
+
   const playerMaxTime = 
-  flag1PlayerCount === 1 ? 40 
-  : flag1PlayerCount === 2 ? 35 
-  : flag1PlayerCount === 3 ? 30 : 25;
+  flag1PlayerCount === 1 ? 35 
+  : flag1PlayerCount === 2 ? 30 
+  : flag1PlayerCount === 3 ? 25 : 20;
 
   const eachPlayerOnFieldCount = playerMaxTime / 5;
-  const restTimeCount = playerMaxTime === 40 ? 0 : (40 - playerMaxTime) / 5;
+  const restTimeCount = 8 - eachPlayerOnFieldCount;
   console.log('resttime', restTimeCount);
   
 
@@ -354,6 +405,7 @@ export function createFlag1Positions(array) {
     const restArray = Array(restTimeCount).fill(0);
     const playerArray = activePlayerArray.concat(restArray);
     const playerPositioning = randomizePositioning(playerArray);
+    console.log('THIS', restArray, playerArray, playerPositioning);
     
     console.log('playerPosition', playerPositioning);
     player.quarters.forEach((quarter) => {
@@ -418,6 +470,18 @@ export function randomizePositioning(arr) {
     }
     return indices;
   }, []);
+
+  if (nonZeroIndices.length + 1 === arr.length) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      // Generate a random index between 0 and i (inclusive)
+      const randomIndex = Math.floor(Math.random() * (i + 1));
+  
+      // Swap the elements at randomIndex and i
+      [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]];
+    }
+
+    return arr;
+  }
 
   const sortedArray = Array.from({ length: arr.length }, () => 0);
 

@@ -10,13 +10,9 @@ import { createPlayerSchedule } from './utils/createPlayerSchedule';
 function App() {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPositioningTableOpen, setIsPositioningTableOpen] = useState(true);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [quarterData, setQuarterData] = useState({
-    quarterOne: [],
-    quarterTwo: [],
-    quarterThree: [],
-    quarterFour: []
-  });
+  const [quarterData, setQuarterData] = useState([]);
   const [playerCount, setPlayerCount] = useState(0);
   const [err, setErr] = useState('');
   console.log(playerCount)
@@ -49,8 +45,9 @@ function App() {
     if (count >= 6 && count <= 10) {
       setData(initialDataArray);
       setPlayerCount(count);
+      setErr('');
     } else {
-      setErr("Cannot create a team unless between 6-10 players.")
+      setErr("Please pick between 6-10 players.")
     }
     
   };
@@ -59,19 +56,29 @@ function App() {
     const freshData = await resetQuartersData(data);
     const playerData = await createPlayerSchedule(freshData);
     setQuarterData(playerData);
-    console.log('handleLineup',playerData)
+    setIsPositioningTableOpen(false);
+    console.log('handleLineup', playerData)
+  }
+
+  const clearLineup = () => {
+    setData([]);
+    setQuarterData([])
   }
 
   return (
     <>
       <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Player Count App</h1>
+      <h1 className="text-2xl font-bold mb-4">Game Rotation App</h1>
+      <p className=' bg-cyan-300 border-cyan-500 border-2 rounded-lg mb-8'>Screenshot rotations created.<br/>Saving data is currently not supported.</p>
       {!data.length > 0
         ? <>
             <PlayerCountInput onPlayerCountChange={handlePlayerCountChange} />
-            <p>{err}</p>
+            {err !== '' && <p className=' bg-red-300 rounded-lg p-4'>{err}</p>}
           </>
         : <>
+          <h3 onClick={() => setIsPositioningTableOpen(!isPositioningTableOpen)}
+          className={`px-6 py-3 bg-slate-300 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider border border-slate-300 ${isPositioningTableOpen ? 'rounded-t-lg' : 'rounded-lg'}`}>Set Players</h3>
+          { isPositioningTableOpen && <>
           <PlayerPositionTable rows={data} onModal={openModal} isModalOpen={isModalOpen} />
           <EditTableModal
             isOpen={isModalOpen}
@@ -79,14 +86,20 @@ function App() {
             rowData={selectedRow != null ? selectedRow : { name: '', flag: ''}}
             onSave={handleSave}
             />
-            <button onClick={() => handleLineup()}>Confirm Lineup</button>
+            <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mx-2 my-4" onClick={() => clearLineup()}>Clear</button>
+            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mx-2 my-4" onClick={() => handleLineup()}>Confirm Lineup</button>
+          </>}
+          
           </>
       }
     </div>
-    {quarterData.quarterOne.length > 0 && <QuarterTable name={'First'} data={quarterData.quarterOne} quarter={0}/>}
-    {quarterData.quarterTwo.length > 0 && <QuarterTable name={'Second'} data={quarterData.quarterTwo} quarter={1}/>}
-    {quarterData.quarterThree.length > 0 && <QuarterTable name={'Third'} data={quarterData.quarterThree} quarter={2}/>}
-    {quarterData.quarterFour.length > 0 && <QuarterTable name={'Fourth'} data={quarterData.quarterFour} quarter={3}/>}
+    {quarterData.length > 0 && <>
+      <QuarterTable name={'First'} data={quarterData} quarter={0}/>
+      <QuarterTable name={'Second'} data={quarterData} quarter={1}/>
+      <QuarterTable name={'Third'} data={quarterData} quarter={2}/>
+      <QuarterTable name={'Fourth'} data={quarterData} quarter={3}/>
+      </>
+    }
     </>
   )
 }

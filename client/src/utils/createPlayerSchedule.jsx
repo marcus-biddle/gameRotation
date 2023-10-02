@@ -1,4 +1,4 @@
-import { createFlag1Positions, createFlag2Positions, updateFlag3PlayerPositions } from "../helpers"
+import { createFlag1Positions, createFlag2Positions, createFlag3Positions } from "../helpers"
 
 export const createPlayerSchedule = async (data) => {
 
@@ -40,16 +40,10 @@ export const createPlayerSchedule = async (data) => {
     // ASSUMPTIONS 
     // 1) 6-10 players
     // 2) Minimum of one of each flag type is playing
-    const flag3Positions = await updateFlag3PlayerPositions(data);
-    const flag1Positions = await createFlag1Positions(flag3Positions);
-    const completedData = await createFlag2Positions(flag1Positions);
-
-    console.log(completedData)
-
-  return {
-    quarterOne: [],
-    quarterTwo: [],
-    quarterThree: [],
-    quarterFour: [],
-  }
+    
+    const flag1Positions = await createFlag1Positions(data);
+    const flag2Positions = await createFlag3Positions(flag1Positions);
+    const completedData = await createFlag2Positions(flag2Positions);
+    
+  return completedData;
 }

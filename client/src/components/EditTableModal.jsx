@@ -11,13 +11,12 @@ export const EditTableModal = (modal) => {
 
   const handleSave = () => {
     if ((editedData.name && editedData.flag || (modal.rowData.name != '' && modal.rowData.flag != ''))) {
-      const time = editedData.flag === '3' ? 20 : 0;
       setError(false)
       const data = { 
         position: modal.rowData.position, 
-        name: editedData.name, flag: 
-        editedData.flag, 
-        maxTimeAllowed: time,
+        name: editedData.name, 
+        flag: editedData.flag, 
+        maxTimeAllowed: 0,
         quarters: [
           {
             firstHalf: 0,
@@ -51,9 +50,9 @@ export const EditTableModal = (modal) => {
     <div className={`modal ${modal.isOpen ? 'block' : 'hidden'}`}>
       <div className="modal-container">
         <div className="modal-content">
-          <h2>Edit Data</h2> 
+          <h2>Edit Player Slot</h2> 
           <div>
-            <label>Name:</label>
+            <label>Player Name:</label>
             <input
               type="text"
               name="name"
@@ -62,7 +61,7 @@ export const EditTableModal = (modal) => {
             />
           </div>
           <div>
-            <label>Flag:</label>
+            <label>Flag Priority:</label>
             <select
                 name="flag"
                 value={modal.rowData.flag != '' ? modal.rowData.flag : editedData.flag}
@@ -75,7 +74,16 @@ export const EditTableModal = (modal) => {
             </select>
         </div>
           {error && <p>Please fill everything out</p>}
-          <button onClick={handleSave}>Save</button>
+          <button
+          className="cancel-btn"
+          onClick={() => modal.onClose()}>
+            Cancel
+          </button>
+          <button 
+          className='save-btn'
+          onClick={handleSave}>
+            Save
+          </button>
         </div>
       </div>
     </div>

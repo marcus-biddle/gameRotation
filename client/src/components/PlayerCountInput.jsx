@@ -16,6 +16,7 @@ const PlayerCountInput = ({onPlayerCountChange}) => {
     if (playerCount !== '') {
       onPlayerCountChange(parseInt(playerCount, 10));
     }
+    setPlayerCount('');
   };
 
   return (
