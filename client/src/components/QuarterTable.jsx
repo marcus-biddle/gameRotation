@@ -1,7 +1,7 @@
-import { checkQuarterSum } from "../helpers";
+import { calcPlayerTimeOnField } from "../helpers";
 
 const QuarterTable = ( quarter ) => {
-  console.log('table props', quarter);
+
   return (
     <div className="m-6 border rounded-lg bg-gray-700 text-white" key={quarter.name}>
       <h2 className="text-xl font-semibold mb-4 text-blue-400">{quarter.name} Quarter</h2>
@@ -16,7 +16,7 @@ const QuarterTable = ( quarter ) => {
           </thead>
           <tbody>
             {quarter.data.map((item) => (
-              <tr key={item.position}>
+              <tr key={item.position} className={`${(quarter.quarter !== 0 && (item.quarters[quarter.quarter - 1].secondHalf === 0 && item.quarters[quarter.quarter].firstHalf === 0)) || (calcPlayerTimeOnField(quarter.quarter, quarter.data, 1) != 30 || calcPlayerTimeOnField(quarter.quarter, quarter.data, 2) != 30)  ? 'bg-red-600' : ''}`}>
                 <td className="px-4 py-2 border-b text-blue-200">{item.name}</td>
                 <td className="px-4 py-2 border-b">
                   {item.quarters[quarter.quarter].firstHalf === 5 ? 
@@ -30,8 +30,8 @@ const QuarterTable = ( quarter ) => {
             ))}
             <tr>
               <td className="text-blue-200">Total Time</td>
-              <td className="text-blue-200">{checkQuarterSum(quarter.quarter, quarter.data, 1)}</td>
-              <td className="text-blue-200">{checkQuarterSum(quarter.quarter, quarter.data, 1)}</td>
+              <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 1)}</td>
+              <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 2)}</td>
             </tr>
           </tbody>
         </table>
