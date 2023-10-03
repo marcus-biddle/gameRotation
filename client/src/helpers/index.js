@@ -146,12 +146,14 @@ export function createFlag2Positions(array) {
           }
         })
 
-        if (onFieldPlayers.length < 0) {
+        if (onFieldPlayers.length === 0) {
           break;
         }
 
         const difference = (playerTime - 30) / 5;
         console.log('difference', difference, onFieldPlayers, quarter, half)
+
+
 
         for (let index = 0; index < difference; index++) {
           console.log('loop', onFieldPlayers[index])
@@ -161,6 +163,7 @@ export function createFlag2Positions(array) {
           }, onFieldPlayers[0]);
 
           if (!mostPlayedFlag2Player) {
+            playerTime = calcPlayerTimeOnField(quarter, array, half);
             break;
           }
 
@@ -168,9 +171,11 @@ export function createFlag2Positions(array) {
 
           half === 1 ? mostPlayedFlag2Player.quarters[quarter].firstHalf = 0 : mostPlayedFlag2Player.quarters[quarter].secondHalf = 0;
           mostPlayedFlag2Player.maxTimeAllowed = mostPlayedFlag2Player.maxTimeAllowed - 5;
-          playerTime = calcPlayerTimeOnField(quarter, array, half);
-          console.log('end playerTime', quarter, half, playerTime)
+          
         }
+
+        playerTime = calcPlayerTimeOnField(quarter, array, half);
+        console.log('end playerTime', quarter, half, playerTime)
 
         // for (let index = 0; index < difference; index++) {
         //   // Grab a player on the field and put him on the bench
