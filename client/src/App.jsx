@@ -66,7 +66,7 @@ function App() {
   }
 
   return (
-    <>
+    <div className=' bg-white'>
       <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Game Rotation App</h1>
       {/* <p className=' bg-cyan-300 border-cyan-500 border-2 rounded-lg mb-8'>Saving data is currently not applicable.</p> */}
@@ -100,7 +100,7 @@ function App() {
       <QuarterTable name={'Fourth'} data={quarterData} quarter={3}/>
       </>
     }
-    </>
+    </div>
   )
 }
 
