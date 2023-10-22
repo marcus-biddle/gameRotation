@@ -1,4 +1,4 @@
-import { calcPlayerTimeOnField } from "../helpers";
+import { addTotalTime, calcPlayerTimeOnField } from "../helpers";
 
 const QuarterTable = ( quarter ) => {
 
@@ -10,6 +10,7 @@ const QuarterTable = ( quarter ) => {
           <thead>
             <tr>
               <th className="px-4 py-2 text-left border-b text-blue-400">Name</th>
+              <th className="px-4 py-2 text-left border-b text-blue-400">Total Minutes</th>
               <th className="px-4 py-2 text-left border-b text-blue-400">First Half</th>
               <th className="px-4 py-2 text-left border-b text-blue-400">Second Half</th>
             </tr>
@@ -19,6 +20,7 @@ const QuarterTable = ( quarter ) => {
               return (
                 <tr key={obj.position}>
                   <td className="px-4 py-2 border-b text-blue-200">{obj.name}</td>
+                  <td className="px-4 py-2 border-b text-blue-200">{obj.timePlayed}</td>
                   <td className="px-4 py-2 border-b">
                     {obj.quarters[quarter.quarter].firstHalf === 5 ? 
                     <span className=" text-green-500">IN</span> : <span className=" text-red-400">OUT</span>}
@@ -32,6 +34,7 @@ const QuarterTable = ( quarter ) => {
             })}
             <tr>
               <td className="text-blue-200">Total Time</td>
+              <td className="text-blue-200">{addTotalTime(quarter.data)}</td>
               <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 1)}</td>
               <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 2)}</td>
             </tr>

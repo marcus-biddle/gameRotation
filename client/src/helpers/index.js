@@ -451,10 +451,12 @@ export const bringInactivePlayersIntoQ2 = (data) => {
   for (let i = 0; i < prevInactivePlayers.length; i++) {
     prevInactivePlayers[i].quarters[1].firstHalf = 5;
   }
+
+  addPlayerTime(data);
 }
 
 export const createQ2Flag2 = (data) => {
-  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[1].firstHalf !== 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[1].firstHalf !== 5).sort((a, b) => a.timePlayed - b.timePlayed);
 
   for (let i = 0; i < Math.floor(flag2Players.length / 2); i++) {
     console.log('i', i);
@@ -550,11 +552,13 @@ export const bringInactivePlayersIntoQ3 = (data) => {
   for (let i = 0; i < prevInactivePlayers.length; i++) {
     prevInactivePlayers[i].quarters[2].firstHalf = 5;
   }
+
+  addPlayerTime(data);
 }
 
 export const createQ3Flag2 = (data) => {
   const activePlayers = data.filter((player) => player.quarters[2].firstHalf === 5);
-  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[2].firstHalf !== 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[2].firstHalf !== 5).sort((a, b) => a.timePlayed - b.timePlayed);
 
   if (flag2Players.length === 0) return;
 
@@ -592,6 +596,8 @@ export const bringInactivePlayersIntoQ3SecondHalf = (data) => {
   for (let i = 0; i < prevInactivePlayers.length; i++) {
     prevInactivePlayers[i].quarters[2].secondHalf = 5;
   }
+
+  addPlayerTime(data);
 }
 
 export const createQ3SecondHalfFlag1 = (data) => {
@@ -619,7 +625,7 @@ export const createQ3SecondHalfFlag1 = (data) => {
 
 export const createQ3SecondHalfFlag2 = (data) => {
   const activePlayers = data.filter((player) => player.quarters[2].secondHalf === 5);
-  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[2].secondHalf !== 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[2].secondHalf !== 5).sort((a, b) => a.timePlayed - b.timePlayed);
 
   for (let i = 0; i < 6 - activePlayers.length; i++) {
     flag2Players[i].quarters[2].secondHalf = 5;
@@ -682,20 +688,25 @@ export const bringInactivePlayersIntoQ4SecondHalf = (data) => {
   for (let i = 0; i < prevInactivePlayers.length; i++) {
     prevInactivePlayers[i].quarters[3].secondHalf = 5;
   }
+
+  addPlayerTime(data);
 }
 
 export const createQ4SecondHalfFlag1 = (data) => {
   const activePlayers = data.filter((player) => player.quarters[3].secondHalf === 5);
-  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[3].secondHalf !== 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[3].secondHalf !== 5)
+  .sort((a, b) => a.timePlayed - b.timePlayed);
 
   for (let i = 0; i < (Math.floor(flag1Players.length / 2)); i++) {
     flag1Players[i].quarters[3].secondHalf = 5;
   }
+
+  return data;
 }
 
 export const createQ4SecondHalfFlag2 = (data) => {
   const activePlayers = data.filter((player) => player.quarters[3].secondHalf === 5);
-  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[3].secondHalf !== 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[3].secondHalf !== 5).sort((a, b) => a.timePlayed - b.timePlayed);
 
   if (flag2Players.length === 0) return;
 
@@ -747,4 +758,26 @@ export const checkQ4SecondHalf = (data) => {
   if (activePlayers.length !== 6) {
     inactivePlayers[0].quarters[3].secondHalf = 5;
   }
+}
+
+export const addPlayerTime = (data) => {
+  for (let i = 0; i < data.length; i++) {
+    let total = 0;
+
+    for (const quarter of data[i].quarters) {
+      total += quarter.firstHalf + quarter.secondHalf;
+    }
+
+    data[i].timePlayed = total;
+  }
+}
+
+export const addTotalTime = (data) => {
+  let total = 0;
+
+  for (const player of data) {
+    total += player.timePlayed;
+  }
+
+  return total;
 }
