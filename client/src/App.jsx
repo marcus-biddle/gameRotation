@@ -138,7 +138,7 @@ function App() {
             {table}
           </div>
         ))}
-        <>
+        <div className=' mb-6'>
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
@@ -154,7 +154,7 @@ function App() {
           >
             Next
           </button>
-        </>
+        </div>
       </>}
     </div>
   )
