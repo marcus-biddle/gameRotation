@@ -1,75 +1,165 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css'
-import PlayerCountInput from './components/PlayerCountInput';
 import { PlayerPositionTable } from './components/PlayerPositionTable';
-import { generateDataArrayWithLength, resetQuartersData } from './helpers';
-import { EditTableModal } from './components/EditTableModal';
+import { formatDataObject, resetQuartersData } from './helpers';
+import { AddPlayerModal } from './components/AddPlayerModal';
 import QuarterTable from './components/QuarterTable';
-import { createPlayerSchedule } from './utils/createPlayerSchedule';
+import { generatePlayerData } from './utils/createPlayerSchedule';
 
 function App() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    { position: 1, name: 'Test', flag: '1' },
+    { position: 2, name: 'Test', flag: '1' },
+    { position: 3, name: 'Test', flag: '1' },
+    { position: 4, name: 'Test', flag: '1' },
+    { position: 5, name: 'Test 2', flag: '2' },
+    { position: 6, name: 'Test 2', flag: '2' },
+    { position: 7, name: 'Test 2', flag: '2' },
+    { position: 8, name: 'Test 2', flag: '2' },
+    { position: 9, name: 'Test 3', flag: '3' },
+    { position: 10, name: 'Test 3', flag: '3' },
+  ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [addPlayerModal, setAddPlayerModal] = useState(false);
   const [isPositioningTableOpen, setIsPositioningTableOpen] = useState(true);
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(undefined);
   const [quarterData, setQuarterData] = useState([]);
   const [playerCount, setPlayerCount] = useState(0);
+  const [confirmData, setConfirmData] = useState(false);
   const [err, setErr] = useState('');
-  console.log(playerCount)
-
-  console.log(data);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const openModal = (row) => {
-    setSelectedRow(row);
-    setIsModalOpen(true);
+    if (row) {
+      setSelectedRow(row);
+    }
+    setAddPlayerModal(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setAddPlayerModal(false);
   };
 
-  const handleSave = (editedData) => {
-    const updatedData = data.map((row) => {
-      if (row.position === editedData.position) {
-        return editedData;
-      }
-      return row;
-    }
-    );
-
-    setData(updatedData);
-  };
-
-  const handlePlayerCountChange = (count) => {
-    const initialDataArray = generateDataArrayWithLength(count);
-    if (count >= 6 && count <= 10) {
-      setData(initialDataArray);
-      setPlayerCount(count);
-      setErr('');
+  const handleSave = (newData) => {
+    const foundRow = data.find(obj => obj.position === newData.position);
+    if (foundRow) {
+      const updatedData = data.map((obj) => {
+        if (obj.position === newData.position) {
+          return newData
+        }
+        return obj;
+      });
+      setData(updatedData);
+      
     } else {
-      setErr("Please pick between 6-10 players.")
+      setData([...data, newData]);
     }
+    setSelectedRow(undefined);
+    setAddPlayerModal(false);
     
   };
 
-  const handleLineup = async () => {
-    const freshData = await resetQuartersData(data);
-    const playerData = await createPlayerSchedule(freshData);
-    setQuarterData(playerData);
-    setIsPositioningTableOpen(false);
-    console.log('handleLineup', playerData)
+  const handleConfirmation = () => {
+    setConfirmData(true);
+    const formatData = data.map((obj) => {
+      return formatDataObject(obj);
+    });
+    
+    generatePlayerData(formatData);
+    setData(formatData);
   }
 
-  const clearLineup = () => {
-    setData([]);
-    setQuarterData([])
-  }
+  const TABLES = [
+    <QuarterTable name={'First'} data={data} quarter={0}/>,
+    <QuarterTable name={'Second'} data={data} quarter={1}/>,
+    <QuarterTable name={'Third'} data={data} quarter={2}/>,
+    <QuarterTable name={'Fourth'} data={data} quarter={3}/>
+  ];
+
+  const totalPages = 4;
+  const startIndex = (currentPage - 1) * 1;
+  const endIndex = startIndex + 1;
+  const currentTableData = TABLES.slice(startIndex, endIndex);
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
-    <div className=' bg-white'>
-      <div className="container mx-auto p-4">
+    <div className=' bg-white h-screen'>
+      <div className=' p-10 bg-gray-700 text-white mb-8'>
+        <h2 className=' text-2xl'>Player Rotation</h2>
+      </div>
+      {!confirmData && <>
+        <div className=' flex items-center justify-between'>
+          <h3 className=' text-md uppercase underline underline-offset-2 ml-5'>Team Roster</h3>
+          <button 
+          onClick={openModal}
+          className=' bg-transparent border-none text-green-600 text-md'><span className=' text-xl'>+</span> Player</button>
+        </div>
+        <div className="container mx-auto p-4">
+          <PlayerPositionTable rows={data} onModal={openModal} isModalOpen={isModalOpen} />
+          {addPlayerModal && 
+          <AddPlayerModal 
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onSave={handleSave}
+            row={selectedRow}
+            data={data}
+          />}
+        </div>
+        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mx-2 my-4" onClick={() => setData([])}>Clear</button>
+        {data.length >= 6 && data.length <= 10 &&
+          <>
+            
+            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mx-2 my-4" onClick={handleConfirmation}>Confirm Roster</button>
+          </>
+        }
+      </>}
+      {confirmData && 
+      <>
+        <div className=' w-full text-left'>
+          <button className=' uppercase text-sm text-gray-500 bg-transparent'onClick={() => setConfirmData(false)}>{'<'} Go back to Roster</button>
+        </div>
+        {currentTableData.map((table, index) => (
+          <div key={index}>
+            {table}
+          </div>
+        ))}
+        <>
+          <button
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 mr-2 ${currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
+          >
+            Previous
+          </button>
+          <span>{currentPage} of {totalPages}</span>
+          <button
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 ml-2 ${currentPage === totalPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
+          >
+            Next
+          </button>
+        </>
+      </>}
+      {/* <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Game Rotation App</h1>
-      {/* <p className=' bg-cyan-300 border-cyan-500 border-2 rounded-lg mb-8'>Saving data is currently not applicable.</p> */}
+      <p className=' bg-cyan-300 border-cyan-500 border-2 rounded-lg mb-8'>Saving data is currently not applicable.</p>
       {!data.length > 0
         ? <>
             <PlayerCountInput onPlayerCountChange={handlePlayerCountChange} />
@@ -99,7 +189,7 @@ function App() {
       <QuarterTable name={'Third'} data={quarterData} quarter={2}/>
       <QuarterTable name={'Fourth'} data={quarterData} quarter={3}/>
       </>
-    }
+    } */}
     </div>
   )
 }

@@ -6,6 +6,7 @@ const HEADS = [
 ]
 
 export const PlayerPositionTable = (table) => {
+  console.log('table',table);
   return (
     <table className=" min-w-[100%] border-slate-300 border-2">
       <thead>

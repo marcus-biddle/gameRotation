@@ -1,49 +1,46 @@
-import { createFlag1Positions, createFlag2Positions, createFlag3Positions } from "../helpers"
+import { bringInactivePlayersIntoQ1SecondHalf, bringInactivePlayersIntoQ2, bringInactivePlayersIntoQ2SecondHalf, bringInactivePlayersIntoQ3, bringInactivePlayersIntoQ3SecondHalf, bringInactivePlayersIntoQ4, bringInactivePlayersIntoQ4SecondHalf, createQ1Flag1, createQ1Flag2, createQ1Flag3, createQ1SecondHalfFlag1, createQ1SecondHalfFlag2, createQ2Flag1, createQ2Flag2, createQ2Flag3, createQ2SecondHalfFlag1, createQ2SecondHalfFlag2, createQ3Flag2, createQ3SecondHalfFlag1, createQ3SecondHalfFlag2, createQ4Flag1, createQ4Flag3, createQ4SecondHalfFlag1, createQ4SecondHalfFlag2, createQ4SecondHalfFlag3, } from "../helpers"
 
-export const createPlayerSchedule = async (data) => {
-
-    // // First Half of quarter 1
-    // const iterationOne = await updateFlag3PlayerPositions(data);
-    // const iterationTwo = await updateFlag1PlayerPositions(iterationOne, 0, 1);
-    // const iterationThree = await updateFlag2PlayerPositions(iterationTwo, 0, 1);
-    // // Second half of quarter 1
-    // const iterationFour = await updateFlag1PlayerPositions(iterationThree, 0, 2);
-    // const iterationFive = await updateFlag2PlayerPositions(iterationFour, 0, 2);
-    // const quarterOneData = await updatePlayerTimeInQuarter(iterationFive, 0);
-
-
-    // // First Half of quarter 2
-    // const iterationSeven = await updateFlag1PlayerPositions(quarterOneData, 1, 1);
-    // const iterationEight = await updateFlag2PlayerPositions(iterationSeven, 1, 1);
-    // // // Second half of quarter 2
-    // const iterationNine = await updateFlag1PlayerPositions(iterationEight, 1, 2);
-    // const iterationTen = await updateFlag2PlayerPositions(iterationNine, 1, 2);
-    // const quarterTwoData = await updatePlayerTimeInQuarter(iterationTen, 1);
-
-
-    // // // First Half of quarter 3
-    // const iterationEleven = await updateFlag1PlayerPositions(quarterTwoData, 2, 1);
-    // const iterationTwelve = await updateFlag2PlayerPositions(iterationEleven, 2, 1);
-    // // // Second half of quarter 3
-    // const iterationThirteen = await updateFlag1PlayerPositions(iterationTwelve, 2, 2);
-    // const iterationFourteen = await updateFlag2PlayerPositions(iterationThirteen, 2, 2);
-    // const quarterThreeData = await updatePlayerTimeInQuarter(iterationFourteen, 2);
-
-    //  // // First Half of quarter 3
-    //  const iterationFifteen = await updateFlag1PlayerPositions(quarterThreeData, 3, 1);
-    //  const iterationSixteen = await updateFlag2PlayerPositions(iterationFifteen, 3, 1);
-    //  // // Second half of quarter 3
-    //  const iterationSeventeen = await updateFlag1PlayerPositions(iterationSixteen, 3, 2);
-    //  const iterationEighteen = await updateFlag2PlayerPositions(iterationSeventeen, 2, 2);
-    //  const quarterFourData = await updatePlayerTimeInQuarter(iterationEighteen, 3);
-
-    // ASSUMPTIONS 
-    // 1) 6-10 players
-    // 2) Minimum of one of each flag type is playing
+export const generatePlayerData = (data) => {
     
-    const flag1Positions = await createFlag1Positions(data);
-    const flag2Positions = await createFlag3Positions(flag1Positions);
-    const completedData = await createFlag2Positions(flag2Positions);
+    createQ1Flag1(data);
+    createQ1Flag3(data);
+    createQ1Flag2(data);
+
+    bringInactivePlayersIntoQ1SecondHalf(data);
+
+    createQ1SecondHalfFlag1(data);
+    createQ1SecondHalfFlag2(data);
+
+    bringInactivePlayersIntoQ2(data);
+
+    createQ2Flag2(data);
+    createQ2Flag3(data);
+    createQ2Flag1(data);
+
+    bringInactivePlayersIntoQ2SecondHalf(data);
+
+    createQ2SecondHalfFlag2(data);
+    createQ2SecondHalfFlag1(data);
+
+    bringInactivePlayersIntoQ3(data);
+
+    createQ3Flag2(data);
+
+    bringInactivePlayersIntoQ3SecondHalf(data);
+
+    createQ3SecondHalfFlag1(data);
+    createQ3SecondHalfFlag2(data);
+
+    bringInactivePlayersIntoQ4(data);
+
+    createQ4Flag3(data);
+    createQ4Flag1(data);
+
+    bringInactivePlayersIntoQ4SecondHalf(data);
+
+    createQ4SecondHalfFlag1(data);
+    createQ4SecondHalfFlag2(data);
+    createQ4SecondHalfFlag3(data);
     
-  return completedData;
+  return data;
 }

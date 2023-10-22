@@ -1,33 +1,28 @@
-export function generateDataArrayWithLength(rowLength) {
-  
-    // Create an array of objects with 'position' starting from 'A'
-    const dataArray = Array.from({ length: rowLength }, (_, index) => ({
-      position: String.fromCharCode('A'.charCodeAt(0) + index),
-      name: '',
-      flag: '',
-      maxTimeAllowed: 0,
-      quarters: [
-        {
-          firstHalf: 0,
-          secondHalf: 0
-        },
-        {
-          firstHalf: 0,
-          secondHalf: 0
-        },
-        {
-          firstHalf: 0,
-          secondHalf: 0
-        },
-        {
-          firstHalf: 0,
-          secondHalf: 0
-        }
-      ]
-    }));
-  
-    return dataArray;
-  }
+export function formatDataObject(obj) {
+  const formattedObj = {
+    ...obj, 
+    timePlayed: 0,
+    quarters: [
+      {
+        firstHalf: 0,
+        secondHalf: 0
+      },
+      {
+        firstHalf: 0,
+        secondHalf: 0
+      },
+      {
+        firstHalf: 0,
+        secondHalf: 0
+      },
+      {
+        firstHalf: 0,
+        secondHalf: 0
+      }
+    ]};
+
+    return formattedObj;
+}
 
 export function resetQuartersData(dataArray) {
   // Iterate through each object in the array
@@ -373,4 +368,323 @@ export function randomizePositioning(arr) {
   } 
 
   return sortedArray;
+}
+
+// ------------------------------------------------------------------------------------------------------
+
+export const createQ1Flag1 = (data) => {
+  data.map((player) => {
+    if (player.flag === '1') {
+      player.quarters[0].firstHalf = 5;
+    }
+  });
+
+  return data;
+}
+
+export const createQ1Flag3 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[0].firstHalf === 5);
+
+  if (activePlayers.length < 6) {
+    const flag3Players = data.filter((player) => player.flag === '3');
+
+    const expectedActiveFlag3Players = Math.floor(flag3Players.length / 3);
+
+    for (let i = 0; i < expectedActiveFlag3Players; i++) {
+      flag3Players[i].quarters[0].firstHalf = 5;
+    }
+  }
+
+  return data;
+}
+
+export const createQ1Flag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[0].firstHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2');
+  for (let i = 0; i < (6 - activePlayers.length); i++) {
+    flag2Players[i].quarters[0].firstHalf = 5;
+  }
+
+  return data;
+  
+}
+
+export const bringInactivePlayersIntoQ1SecondHalf = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[0].firstHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[0].secondHalf = 5;
+  }
+}
+
+export const createQ1SecondHalfFlag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[0].secondHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1');
+
+  console.log('createQ1SecondHalfFlag1', flag1Players);
+
+  if (flag1Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag1Players.length; i++) {
+      flag1Players[i].quarters[0].secondHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag1Players[i].quarters[0].secondHalf = 5;
+    }
+  }
+}
+
+export const createQ1SecondHalfFlag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[0].secondHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2');
+
+  if (flag2Players.length === 0) return;
+
+  for (let i = 0; i < 6 - activePlayers.length; i++) {
+    flag2Players[i].quarters[0].secondHalf = 5;
+  }
+}
+
+export const bringInactivePlayersIntoQ2 = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[0].secondHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[1].firstHalf = 5;
+  }
+}
+
+export const createQ2Flag2 = (data) => {
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[1].firstHalf !== 5);
+
+  for (let i = 0; i < Math.floor(flag2Players.length / 2); i++) {
+    console.log('i', i);
+    flag2Players[i].quarters[1].firstHalf = 5;
+  }
+}
+
+export const createQ2Flag3 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[1].firstHalf === 5);
+  const flag3Players = data.filter((player) => player.flag === '3' && player.quarters[1].firstHalf !== 5);
+
+  if (flag3Players.length === 0) return;
+
+  console.log('createQ2Flag3', flag3Players);
+
+  for (let i = 0; i < Math.floor(flag3Players.length / 2); i++) {
+    flag3Players[i].quarters[1].firstHalf = 5;
+  }
+
+  // if (flag3Players.length < (6 - activePlayers.length)) {
+  //   for (let i = 0; i < flag3Players.length; i++) {
+  //     flag3Players[i].quarters[1].firstHalf = 5;
+  //   }
+  // } else {
+  //   for (let i = 0; i < 6 - activePlayers.length; i++) {
+  //     flag3Players[i].quarters[1].firstHalf = 5;
+  //   }
+  // }
+}
+
+export const createQ2Flag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[1].firstHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[1].firstHalf !== 5);
+
+  if (flag1Players.length === 0) return;
+
+  if (flag1Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag1Players.length; i++) {
+      flag1Players[i].quarters[1].firstHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag1Players[i].quarters[1].firstHalf = 5;
+    }
+  }
+}
+
+export const bringInactivePlayersIntoQ2SecondHalf = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[1].firstHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[1].secondHalf = 5;
+  }
+}
+
+export const createQ2SecondHalfFlag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[1].secondHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[1].secondHalf !== 5);
+
+  if (flag2Players.length === 0) return;
+
+  if (flag2Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag2Players.length; i++) {
+      flag2Players[i].quarters[1].secondHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag2Players[i].quarters[1].secondHalf = 5;
+    }
+  }
+}
+
+export const createQ2SecondHalfFlag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[1].secondHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[1].secondHalf !== 5);
+
+  if (flag1Players.length === 0) return;
+
+  if (flag1Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag1Players.length; i++) {
+      flag1Players[i].quarters[1].secondHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag1Players[i].quarters[1].secondHalf = 5;
+    }
+  }
+}
+
+export const bringInactivePlayersIntoQ3 = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[1].secondHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[2].firstHalf = 5;
+  }
+}
+
+export const createQ3Flag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[2].firstHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[2].firstHalf !== 5);
+
+  if (flag2Players.length === 0) return;
+
+  if (flag2Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag2Players.length; i++) {
+      flag2Players[i].quarters[2].firstHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag2Players[i].quarters[2].firstHalf = 5;
+    }
+  }
+}
+
+export const bringInactivePlayersIntoQ3SecondHalf = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[2].firstHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[2].secondHalf = 5;
+  }
+}
+
+export const createQ3SecondHalfFlag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[2].secondHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[2].secondHalf !== 5);
+
+  console.log('createQ3Flag1', flag1Players.length);
+
+  if (flag1Players.length === 0) return;
+
+  if (flag1Players.length < (5 - activePlayers.length)) {
+    for (let i = 0; i < flag1Players.length; i++) {
+      flag1Players[i].quarters[2].secondHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 5 - activePlayers.length; i++) {
+      flag1Players[i].quarters[2].secondHalf = 5;
+    }
+  }
+
+  // for (let i = 0; i < 5 - activePlayers.length; i++) {
+  //   flag1Players[i].quarters[2].secondHalf = 5;
+  // }
+}
+
+export const createQ3SecondHalfFlag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[2].secondHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[2].secondHalf !== 5);
+
+  for (let i = 0; i < 6 - activePlayers.length; i++) {
+    flag2Players[i].quarters[2].secondHalf = 5;
+  }
+}
+
+export const bringInactivePlayersIntoQ4 = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[2].secondHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[3].firstHalf = 5;
+  }
+}
+
+export const createQ4Flag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[3].firstHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[3].firstHalf !== 5);
+
+  for (let i = 0; i < 6 - activePlayers.length; i++) {
+    flag1Players[i].quarters[3].firstHalf = 5;
+  }
+}
+
+export const createQ4Flag3 = (data) => {
+  const flag2Players = data.filter((player) => player.flag === '3');
+
+  for (let i = 0; i < flag2Players.length; i++) {
+    flag2Players[i].quarters[3].firstHalf = 5;
+  }
+}
+
+export const bringInactivePlayersIntoQ4SecondHalf = (data) => {
+  const prevInactivePlayers = data.filter((player) => player.quarters[3].firstHalf !== 5);
+
+  for (let i = 0; i < prevInactivePlayers.length; i++) {
+    prevInactivePlayers[i].quarters[3].secondHalf = 5;
+  }
+}
+
+export const createQ4SecondHalfFlag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[3].secondHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[3].secondHalf !== 5);
+
+  for (let i = 0; i < (Math.floor(flag1Players.length / 2)); i++) {
+    flag1Players[i].quarters[3].secondHalf = 5;
+  }
+}
+
+export const createQ4SecondHalfFlag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[3].secondHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[3].secondHalf !== 5);
+
+  if (flag2Players.length === 0) return;
+
+  if (flag2Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag2Players.length; i++) {
+      flag2Players[i].quarters[3].secondHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag2Players[i].quarters[3].secondHalf = 5;
+    }
+  }
+
+  // for (let i = 0; i < 6 - activePlayers.length; i++) {
+  //   flag2Players[i].quarters[3].secondHalf = 5;
+  // }
+}
+
+export const createQ4SecondHalfFlag3 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[3].secondHalf === 5);
+  const flag3Players = data.filter((player) => player.flag === '3' && player.quarters[3].secondHalf !== 5);
+
+  if (flag3Players.length === 0) return;
+
+  if (flag3Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag3Players.length; i++) {
+      flag3Players[i].quarters[3].secondHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag3Players[i].quarters[3].secondHalf = 5;
+    }
+  }
 }
