@@ -19,7 +19,7 @@ const QuarterTable = ( quarter ) => {
             {quarter.data.map((obj) => {
               return (
                 <tr key={obj.position}>
-                  <td className="px-4 py-2 border-b text-blue-200">{obj.name}</td>
+                  <td className="px-4 py-2 border-b text-blue-200 min-w-[100px]">{obj.name}</td>
                   <td className="px-4 py-2 border-b text-blue-200">{obj.timePlayed}</td>
                   <td className="px-4 py-2 border-b">
                     {obj.quarters[quarter.quarter].firstHalf === 5 ? 
