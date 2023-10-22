@@ -35,10 +35,21 @@ function App() {
     setAddPlayerModal(true);
   };
 
-  const closeModal = () => {
+  // const closeModal = (delete) => {
+  //   setIsModalOpen(false);
+  //   setAddPlayerModal(false);
+  // };
+
+  const handleCloseModal = (row) => {
+    const filteredData = data.filter(obj => obj.position !== row.position).map((player, index) => ({
+      ...player,
+      position: index + 1
+    }));
+
+    setData(filteredData);
     setIsModalOpen(false);
     setAddPlayerModal(false);
-  };
+  }
 
   const handleSave = (newData) => {
     const foundRow = data.find(obj => obj.position === newData.position);
@@ -114,7 +125,7 @@ function App() {
           {addPlayerModal && 
           <AddPlayerModal 
             isOpen={isModalOpen}
-            onClose={closeModal}
+            onClose={handleCloseModal}
             onSave={handleSave}
             row={selectedRow}
             data={data}

@@ -60,11 +60,16 @@ export const AddPlayerModal = ({ onClose, onSave, row, data }) => {
             </select>
         </div>
           {error && <p>Please fill everything out</p>}
-          <button
+          {!row.position ? <button
           className="cancel-btn"
           onClick={onClose}>
             Cancel
-          </button>
+          </button> :
+          <button
+          className="delete-btn"
+          onClick={() => onClose(row)}>
+            Delete
+          </button>}
           <button 
           className='save-btn'
           onClick={handleSave}>
