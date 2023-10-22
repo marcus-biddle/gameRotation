@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import './styled.css';
 
 export const AddPlayerModal = ({ onClose, onSave, row, data }) => {
-  console.log('ROW', row.position);
   const [formData, setFormData] = useState({
     position: data.length + 1,
     name: '',
