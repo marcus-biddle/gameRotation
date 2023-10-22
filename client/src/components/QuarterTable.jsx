@@ -38,24 +38,6 @@ const QuarterTable = ( quarter ) => {
               <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 1)}</td>
               <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 2)}</td>
             </tr>
-            {/* {quarter.data.map((item) => (
-              <tr key={item.position} className={`${(quarter.quarter !== 0 && (item.quarters[quarter.quarter - 1].secondHalf === 0 && item.quarters[quarter.quarter].firstHalf === 0)) || (calcPlayerTimeOnField(quarter.quarter, quarter.data, 1) != 30 || calcPlayerTimeOnField(quarter.quarter, quarter.data, 2) != 30)  ? 'bg-red-600' : ''}`}>
-                <td className="px-4 py-2 border-b text-blue-200">{item.name}</td>
-                <td className="px-4 py-2 border-b">
-                  {item.quarters[quarter.quarter].firstHalf === 5 ? 
-                  <span className=" text-green-500">IN</span> : <span className=" text-red-400">OUT</span>}
-                </td>
-                <td className="px-4 py-2 border-b">
-                  {item.quarters[quarter.quarter].secondHalf === 5 ? 
-                  <span className=" text-green-500">IN</span> : <span className=" text-red-400">OUT</span>}
-                </td>
-              </tr>
-            ))} */}
-            {/* <tr>
-              <td className="text-blue-200">Total Time</td>
-              <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 1)}</td>
-              <td className="text-blue-200">{calcPlayerTimeOnField(quarter.quarter, quarter.data, 2)}</td>
-            </tr> */}
           </tbody>
         </table>
       </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css'
 import { PlayerPositionTable } from './components/PlayerPositionTable';
-import { formatDataObject, resetQuartersData } from './helpers';
+import { formatDataObject  } from './helpers';
 import { AddPlayerModal } from './components/AddPlayerModal';
 import QuarterTable from './components/QuarterTable';
 import { generatePlayerData } from './utils/createPlayerSchedule';
@@ -21,7 +21,6 @@ function App() {
   ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addPlayerModal, setAddPlayerModal] = useState(false);
-  const [isPositioningTableOpen, setIsPositioningTableOpen] = useState(true);
   const [selectedRow, setSelectedRow] = useState(undefined);
   const [quarterData, setQuarterData] = useState([]);
   const [playerCount, setPlayerCount] = useState(0);
@@ -157,39 +156,6 @@ function App() {
           </button>
         </>
       </>}
-      {/* <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Game Rotation App</h1>
-      <p className=' bg-cyan-300 border-cyan-500 border-2 rounded-lg mb-8'>Saving data is currently not applicable.</p>
-      {!data.length > 0
-        ? <>
-            <PlayerCountInput onPlayerCountChange={handlePlayerCountChange} />
-            {err !== '' && <p className=' bg-red-300 rounded-lg p-4'>{err}</p>}
-          </>
-        : <>
-          <h3 onClick={() => setIsPositioningTableOpen(!isPositioningTableOpen)}
-          className={`px-6 py-3 bg-slate-300 text-left text-xs leading-4 font-medium text-gray-800 uppercase tracking-wider border border-slate-300 ${isPositioningTableOpen ? 'rounded-t-lg' : 'rounded-lg'}`}>Set Players</h3>
-          { isPositioningTableOpen && <>
-          <PlayerPositionTable rows={data} onModal={openModal} isModalOpen={isModalOpen} />
-          <EditTableModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            rowData={selectedRow != null ? selectedRow : { name: '', flag: ''}}
-            onSave={handleSave}
-            />
-            <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded mx-2 my-4" onClick={() => clearLineup()}>Clear</button>
-            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mx-2 my-4" onClick={() => handleLineup()}>Confirm Lineup</button>
-          </>}
-          
-          </>
-      }
-    </div>
-    {quarterData.length > 0 && <>
-      <QuarterTable name={'First'} data={quarterData} quarter={0}/>
-      <QuarterTable name={'Second'} data={quarterData} quarter={1}/>
-      <QuarterTable name={'Third'} data={quarterData} quarter={2}/>
-      <QuarterTable name={'Fourth'} data={quarterData} quarter={3}/>
-      </>
-    } */}
     </div>
   )
 }
