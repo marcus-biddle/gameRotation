@@ -99,7 +99,7 @@ function App() {
   }, [data]);
 
   return (
-    <div className=' bg-white h-screen'>
+    <div className=' bg-white h-screen text-black'>
       <div className=' p-10 bg-gray-700 text-white mb-8'>
         <h2 className=' text-2xl'>Player Rotation</h2>
       </div>
