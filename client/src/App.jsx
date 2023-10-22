@@ -105,9 +105,9 @@ function App() {
       {!confirmData && <>
         <div className=' flex items-center justify-between'>
           <h3 className=' text-md uppercase underline underline-offset-2 ml-5'>Team Roster</h3>
-          <button 
+          {data.length <= 10 && <button 
           onClick={openModal}
-          className=' bg-transparent border-none text-green-600 text-md'><span className=' text-xl'>+</span> Player</button>
+          className=' bg-transparent border-none text-green-600 text-md'><span className=' text-xl'>+</span> Player</button>}
         </div>
         <div className="container mx-auto p-4">
           <PlayerPositionTable rows={data} onModal={openModal} isModalOpen={isModalOpen} />
