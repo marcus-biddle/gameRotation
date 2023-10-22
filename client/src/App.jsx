@@ -105,7 +105,7 @@ function App() {
       {!confirmData && <>
         <div className=' flex items-center justify-between'>
           <h3 className=' text-md uppercase underline underline-offset-2 ml-5'>Team Roster</h3>
-          {data.length <= 10 && <button 
+          {data.length <= 9 && <button 
           onClick={openModal}
           className=' bg-transparent border-none text-green-600 text-md'><span className=' text-xl'>+</span> Player</button>}
         </div>
