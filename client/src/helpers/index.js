@@ -781,3 +781,14 @@ export const addTotalTime = (data) => {
 
   return total;
 }
+
+export const makeRosterActive = (data) => {
+  for (let i = 0; i < data.length; i++) {
+    for (let x = 0; x < 4; x++) {
+      data[i].quarters[x].firstHalf = 5;
+      data[i].quarters[x].secondHalf = 5;
+    }
+  }
+
+  return data;
+}

@@ -1,7 +1,12 @@
-import { addPlayerTime, bringInactivePlayersIntoQ1SecondHalf, bringInactivePlayersIntoQ2, bringInactivePlayersIntoQ2SecondHalf, bringInactivePlayersIntoQ3, bringInactivePlayersIntoQ3SecondHalf, bringInactivePlayersIntoQ4, bringInactivePlayersIntoQ4SecondHalf, checkQ2Half, checkQ4SecondHalf, createQ1Flag1, createQ1Flag2, createQ1Flag3, createQ1SecondHalfFlag1, createQ1SecondHalfFlag2, createQ2Flag1, createQ2Flag2, createQ2Flag3, createQ2SecondHalfFlag1, createQ2SecondHalfFlag2, createQ3Flag1, createQ3Flag2, createQ3SecondHalfFlag1, createQ3SecondHalfFlag2, createQ4Flag1, createQ4Flag2, createQ4Flag3, createQ4SecondHalfFlag1, createQ4SecondHalfFlag2, createQ4SecondHalfFlag3, } from "../helpers"
+import { addPlayerTime, bringInactivePlayersIntoQ1SecondHalf, bringInactivePlayersIntoQ2, bringInactivePlayersIntoQ2SecondHalf, bringInactivePlayersIntoQ3, bringInactivePlayersIntoQ3SecondHalf, bringInactivePlayersIntoQ4, bringInactivePlayersIntoQ4SecondHalf, checkQ2Half, checkQ4SecondHalf, createQ1Flag1, createQ1Flag2, createQ1Flag3, createQ1SecondHalfFlag1, createQ1SecondHalfFlag2, createQ2Flag1, createQ2Flag2, createQ2Flag3, createQ2SecondHalfFlag1, createQ2SecondHalfFlag2, createQ3Flag1, createQ3Flag2, createQ3SecondHalfFlag1, createQ3SecondHalfFlag2, createQ4Flag1, createQ4Flag2, createQ4Flag3, createQ4SecondHalfFlag1, createQ4SecondHalfFlag2, createQ4SecondHalfFlag3, makeRosterActive, } from "../helpers"
 
 export const generatePlayerData = (data) => {
-    
+
+  if (data.length === 6) {
+    makeRosterActive(data);
+    addPlayerTime(data);
+    return data;
+  } else {
     createQ1Flag1(data);
     createQ1Flag3(data);
     createQ1Flag2(data);
@@ -49,6 +54,9 @@ export const generatePlayerData = (data) => {
     checkQ4SecondHalf(data);
 
     addPlayerTime(data);
+  }
+    
+    
     
   return data;
 }
