@@ -569,6 +569,23 @@ export const createQ3Flag2 = (data) => {
   }
 }
 
+export const createQ3Flag1 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[2].firstHalf === 5);
+  const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[2].firstHalf !== 5);
+
+  if (flag1Players.length === 0) return;
+
+  if (flag1Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag1Players.length; i++) {
+      flag1Players[i].quarters[2].firstHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag1Players[i].quarters[2].firstHalf = 5;
+    }
+  }
+}
+
 export const bringInactivePlayersIntoQ3SecondHalf = (data) => {
   const prevInactivePlayers = data.filter((player) => player.quarters[2].firstHalf !== 5);
 
@@ -621,8 +638,33 @@ export const createQ4Flag1 = (data) => {
   const activePlayers = data.filter((player) => player.quarters[3].firstHalf === 5);
   const flag1Players = data.filter((player) => player.flag === '1' && player.quarters[3].firstHalf !== 5);
 
-  for (let i = 0; i < 6 - activePlayers.length; i++) {
-    flag1Players[i].quarters[3].firstHalf = 5;
+  if (flag1Players.length === 0) return;
+
+  if (flag1Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag1Players.length; i++) {
+      flag1Players[i].quarters[3].firstHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag1Players[i].quarters[3].firstHalf = 5;
+    }
+  }
+}
+
+export const createQ4Flag2 = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[3].firstHalf === 5);
+  const flag2Players = data.filter((player) => player.flag === '2' && player.quarters[3].firstHalf !== 5);
+
+  if (flag2Players.length === 0) return;
+
+  if (flag2Players.length < (6 - activePlayers.length)) {
+    for (let i = 0; i < flag2Players.length; i++) {
+      flag2Players[i].quarters[3].firstHalf = 5;
+    }
+  } else {
+    for (let i = 0; i < 6 - activePlayers.length; i++) {
+      flag2Players[i].quarters[3].firstHalf = 5;
+    }
   }
 }
 
@@ -686,5 +728,23 @@ export const createQ4SecondHalfFlag3 = (data) => {
     for (let i = 0; i < 6 - activePlayers.length; i++) {
       flag3Players[i].quarters[3].secondHalf = 5;
     }
+  }
+}
+
+export const checkQ2Half = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[1].firstHalf === 5);
+  const inactivePlayers = data.filter((player) => player.quarters[1].firstHalf !== 5 && player.flag !== '3');
+
+  if (activePlayers.length !== 6) {
+    inactivePlayers[0].quarters[1].firstHalf = 5;
+  }
+}
+
+export const checkQ4SecondHalf = (data) => {
+  const activePlayers = data.filter((player) => player.quarters[3].secondHalf === 5);
+  const inactivePlayers = data.filter((player) => player.quarters[3].secondHalf !== 5);
+
+  if (activePlayers.length !== 6) {
+    inactivePlayers[0].quarters[3].secondHalf = 5;
   }
 }
